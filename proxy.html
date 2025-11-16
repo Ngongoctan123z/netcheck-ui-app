@@ -2,278 +2,343 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title id="head-title">NetCheck</title>
   <link rel="icon" type="image/png" href="logo.png">
-  <link rel="stylesheet" href="style.css">
-  <style>
-    .proxy-page .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 24px;
-    }
-    .proxy-page label {
-      display: block;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .proxy-page textarea {
-      width: 100%;
-      min-height: 160px;
-      resize: vertical;
-      font-family: monospace;
-      font-size: 13px;
-      border-radius: 6px;
-      border: 1px solid #ced4da;
-      padding: 10px;
-    }
-    .proxy-page select {
-      padding: 6px 10px;
-      border-radius: 6px;
-      border: 1px solid #ced4da;
-      font-size: 13px;
-    }
-    .proxy-page .hint {
-      font-size: 12px;
-      color: #777;
-      margin-top: 6px;
-    }
-    .proxy-page .controls {
-      margin-top: 16px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .proxy-page .btn {
-      background: #0d6efd;
-      color: #fff;
-      border: none;
-      padding: 10px 22px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 3px 12px rgba(13,110,253,0.3);
-      transition: background 0.2s;
-    }
-    .proxy-page .btn:hover:not(:disabled) {
-      background: #0b5ed7;
-    }
-    .proxy-page .btn:disabled {
-      background: #6c757d;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    .proxy-page .status {
-      margin-top: 10px;
-      color: #0d6efd;
-      font-weight: 500;
-    }
-    .proxy-page .table-wrap {
-      margin-top: 20px;
-      overflow-x: auto;
-    }
-    .proxy-page table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .proxy-page th,
-    .proxy-page td {
-      border: 1px solid #e9ecef;
-      padding: 8px 6px;
-      text-align: left;
-      white-space: nowrap;
-    }
-    .proxy-page th {
-      background: #f8f9fa;
-      font-weight: 600;
-    }
-    .proxy-page .tag-ok {
-      color: #0f5132;
-      background: #d1e7dd;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-    .proxy-page .tag-dead {
-      color: #842029;
-      background: #f8d7da;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-    .proxy-page .tag-unk {
-      color: #664d03;
-      background: #fff3cd;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-size: 11px;
-    }
-    @media (max-width: 600px) {
-      .proxy-page .controls {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-    }
 
-    .lang-display {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .lang-flag {
-      width: 20px;
-      height: 14px;
-      background-size: cover;
-      background-position: center;
-      border-radius: 2px;
-    }
-    #lang-switcher {
-      margin-left: 8px;
-    }
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- CSS riêng -->
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+   /* Phần riêng cho trang proxy, vẫn dùng chung style.css */
+
+/* Tiêu đề phụ */
+.proxy-page .subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* Label */
+.proxy-page label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+/* Ô textarea nhập proxy */
+.proxy-page textarea {
+  width: 100%;
+  min-height: 160px;
+  resize: vertical;
+  font-family: monospace;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  padding: 10px;
+}
+
+/* Select loại proxy */
+.proxy-page select {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  font-size: 13px;
+}
+
+/* Chữ gợi ý bên dưới */
+.proxy-page .hint {
+  font-size: 12px;
+  color: #777;
+  margin-top: 6px;
+}
+
+/* Hàng chứa nút + status */
+.proxy-page .controls {
+  margin-top: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Nút kiểm tra proxy – DÙNG TÊN MỚI, không trùng Bootstrap */
+.proxy-page .btn-netcheck {
+  background: #0d6efd;
+  color: #fff;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 3px 12px rgba(13, 110, 253, 0.3);
+  transition: background 0.2s;
+}
+
+.proxy-page .btn-netcheck:hover:not(:disabled) {
+  background: #0b5ed7;
+}
+
+.proxy-page .btn-netcheck:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Dòng trạng thái */
+.proxy-page .status {
+  margin-top: 10px;
+  color: #0d6efd;
+  font-weight: 500;
+}
+
+/* Bọc bảng kết quả */
+.proxy-page .table-wrap {
+  margin-top: 20px;
+  overflow-x: auto;
+}
+
+/* Bảng kết quả */
+.proxy-page table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.proxy-page th,
+.proxy-page td {
+  border: 1px solid #e9ecef;
+  padding: 8px 6px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.proxy-page th {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+/* Tag trạng thái */
+.proxy-page .tag-ok {
+  color: #0f5132;
+  background: #d1e7dd;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.proxy-page .tag-dead {
+  color: #842029;
+  background: #f8d7da;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.proxy-page .tag-unk {
+  color: #664d03;
+  background: #fff3cd;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+/* Responsive mobile */
+@media (max-width: 600px) {
+  .proxy-page .controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
   </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-logo">
-      <img src="logo.png" alt="ProxyTools">
-      <span class="logo-text">NetCheck</span>
-    </div>
-    <div class="nav-links">
-      <a href="index.html" id="nav-ip">Kiểm tra IP</a>
-      <a href="proxy.html" class="active" id="nav-proxy">Kiểm tra Proxy</a>
-    </div>
-    <div class="nav-lang">
-      <div class="lang-display" id="lang-display">
-        <span class="lang-flag" id="lang-flag"></span>
-        <span class="lang-name" id="lang-name">Vietnam</span>
+
+<!-- NAVBAR (giống index.html, chỉ khác active link) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand d-flex align-items-center" href="index.html">
+      <img src="logo.png" alt="NetCheck logo" class="me-2" style="height:32px; width:auto;">
+      <span class="logo-text fw-semibold">NetCheck</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link" id="nav-ip">Kiểm tra IP</a>
+        </li>
+        <li class="nav-item">
+          <a href="proxy.html" class="nav-link active" id="nav-proxy">Kiểm tra Proxy</a>
+        </li>
+      </ul>
+
+      <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center" id="lang-display" style="cursor:pointer;">
+          <span class="lang-flag me-2" id="lang-flag"
+                style="display:inline-block;width:24px;height:16px;background-size:cover;background-position:center;border-radius:2px;">
+          </span>
+          <span class="lang-name text-white-50" id="lang-name">Vietnam</span>
+        </div>
+        <select id="lang-switcher" class="form-select form-select-sm" style="width:auto;"></select>
       </div>
-      <select id="lang-switcher"></select>
     </div>
-  </nav>
+  </div>
+</nav>
 
-  <main class="container proxy-page">
-    <h1 id="page-title">Kiểm tra Proxy có xác thực</h1>
-    <p id="step-text-1">
-      Bước 1: Chọn loại proxy và dán danh sách định dạng user:pass@ip:port.
-    </p>
-    <p id="step-text-2">
-      Bước 2: Bấm <strong>Kiểm tra proxy</strong> để kiểm tra TCP + HTTP/SOCKS thật.
-    </p>
+<!-- MAIN -->
+<main class="container my-4 proxy-page">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 id="page-title" class="h3 mb-3">Kiểm tra Proxy có xác thực</h1>
+          <p id="step-text-1">
+            Bước 1: Chọn loại proxy và dán danh sách định dạng user:pass@ip:port.
+          </p>
+          <p id="step-text-2">
+            Bước 2: Bấm <strong>Kiểm tra proxy</strong> để kiểm tra
+          </p>
 
-    <label for="proxy-type" id="label-proxy-type">Loại proxy</label>
-    <select id="proxy-type">
-      <option value="http" id="opt-http">HTTP / HTTPS</option>
-      <option value="socks4" id="opt-socks4">SOCKS4</option>
-      <option value="socks5" id="opt-socks5">SOCKS5</option>
-    </select>
+          <div class="mb-3">
+            <label for="proxy-type" id="label-proxy-type">Loại proxy</label>
+            <select id="proxy-type" class="form-select form-select-sm" style="max-width:220px;">
+              <option value="http" id="opt-http">HTTP / HTTPS</option>
+              <option value="socks4" id="opt-socks4">SOCKS4</option>
+              <option value="socks5" id="opt-socks5">SOCKS5</option>
+            </select>
+          </div>
 
-    <label for="proxy-input" id="label-proxy-input" style="margin-top:12px">
-      Nhập danh sách proxy
-    </label>
-   <textarea
-  id="proxy-input"
-  placeholder="user:pass@123.45.67.89:8080
-example 
-p3tAe:4vThAeBb@104.161.50.169:12862
+          <div class="mb-2">
+            <label for="proxy-input" id="label-proxy-input">
+              Nhập danh sách proxy
+            </label>
+            <textarea
+              id="proxy-input"
+              class="form-control"
+              placeholder="user:pass@123.45.67.89:8080
+example :
 user : p3tAe
 pass : 4vThAeBb
 ip   : 104.161.50.169
 port : 12862
-separated by ':' and '@'"
-></textarea>
+separated by ':' and '@'"></textarea>
+          </div>
+
+         
+<div class="controls">
+  <button class="btn btn-netcheck" id="check-btn">Kiểm tra proxy</button>
+  <div class="status" id="status-text">
+    Chưa kiểm tra. Dán danh sách user:pass@ip:port rồi bấm nút.
+  </div>
+</div>
 
 
-    <div class="hint" id="hint-text">
-      • Định dạng bắt buộc: user:pass@ip:port.<br>
-      • Chọn đúng loại: HTTP/HTTPS hoặc SOCKS4/SOCKS5.<br>
-      • Công cụ kiểm tra TCP trước, sau đó gửi request thật qua proxy (có retry).
-    </div>
-
-    <div class="controls">
-      <button class="btn" id="check-btn">Kiểm tra proxy</button>
-      <div class="status" id="status-text">
-        Chưa kiểm tra. Dán danh sách user:pass@ip:port rồi bấm nút.
+          <div class="table-wrap">
+            <table id="result-table">
+              <thead>
+                <tr>
+                  <th id="th-index">#</th>
+                  <th id="th-proxy">Proxy</th>
+                  <th id="th-type">Loại</th>
+                  <th id="th-status">Trạng thái</th>
+                  <th id="th-latency">Độ trễ (ms)</th>
+                  <th id="th-note">Ghi chú</th>
+                </tr>
+              </thead>
+              <tbody id="result-body"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+</main>
 
-    <div class="table-wrap">
-      <table id="result-table">
-        <thead>
-          <tr>
-            <th id="th-index">#</th>
-            <th id="th-proxy">Proxy</th>
-            <th id="th-type">Loại</th>
-            <th id="th-status">Trạng thái</th>
-            <th id="th-latency">Độ trễ (ms)</th>
-            <th id="th-note">Ghi chú</th>
-          </tr>
-        </thead>
-        <tbody id="result-body"></tbody>
-      </table>
-    </div>
-  </main>
-
-  <footer class="footer-large">
-    <div class="footer-large-inner">
-      <div class="footer-col footer-brand">
-        <div class="footer-logo" id="footer-logo">NetCheck</div>
-        <p class="footer-desc" id="footer-desc">
+<!-- FOOTER (giống index.html) -->
+<footer class="mt-auto bg-light border-top pt-4">
+  <div class="container footer-large-inner pb-3">
+    <div class="row gy-4">
+      <div class="col-12 col-md-3 footer-col footer-brand">
+        <div class="footer-logo fw-bold mb-2" id="footer-logo">NetCheck</div>
+        <p class="footer-desc small mb-0" id="footer-desc">
           Công cụ giúp kiểm tra proxy có xác thực (HTTP/SOCKS) bằng kết nối thật.
           Đây chỉ là công cụ tham khảo.
         </p>
       </div>
-      <div class="footer-col" id="footer-terms-col">
-        <div class="footer-col-title" id="footer-terms-title">
+
+      <div class="col-12 col-md-3 footer-col" id="footer-terms-col">
+        <div class="footer-col-title fw-semibold mb-2" id="footer-terms-title">
           Điều khoản &amp; chính sách
         </div>
-        <span class="footer-link" id="footer-terms-use">
-          Chỉ dùng cho mục đích hợp pháp.
-        </span>
-        <span class="footer-link" id="footer-privacy">
-          Không thu thập thêm dữ liệu cá nhân ngoài thông tin kỹ thuật.
-        </span>
-        <span class="footer-link" id="footer-cookie">
-          Cookie (nếu có) chỉ để cải thiện trải nghiệm.
-        </span>
-        <span class="footer-link" id="footer-liability">
-          Kết quả mang tính tham khảo; bạn tự chịu trách nhiệm khi sử dụng.
-        </span>
+        <div class="d-flex flex-column gap-1 small">
+          <span class="footer-link" id="footer-terms-use">
+            Chỉ dùng cho mục đích hợp pháp.
+          </span>
+          <span class="footer-link" id="footer-privacy">
+            Không thu thập thêm dữ liệu cá nhân ngoài thông tin kỹ thuật.
+          </span>
+          <span class="footer-link" id="footer-cookie">
+            Cookie (nếu có) chỉ để cải thiện trải nghiệm.
+          </span>
+          <span class="footer-link" id="footer-liability">
+            Kết quả mang tính tham khảo; bạn tự chịu trách nhiệm khi sử dụng.
+          </span>
+        </div>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title" id="footer-data-title">Dữ liệu &amp; bảo mật</div>
-        <span class="footer-link" id="footer-data-1">
-          Chỉ thu thập thông tin kỹ thuật cơ bản (IP, User-Agent)
-        </span>
-        <span class="footer-link" id="footer-data-2">
-          Không bán/chia sẻ dữ liệu cá nhân cho bên thứ ba
-        </span>
-        <span class="footer-link" id="footer-data-3">
-          Bạn chịu trách nhiệm với danh sách proxy nhập vào
-        </span>
-        <span class="footer-link" id="footer-data-4">
-          Tuân thủ pháp luật Internet hiện hành
-        </span>
+
+      <div class="col-12 col-md-3 footer-col">
+        <div class="footer-col-title fw-semibold mb-2" id="footer-data-title">Dữ liệu &amp; bảo mật</div>
+        <div class="d-flex flex-column gap-1 small">
+          <span class="footer-link" id="footer-data-1">
+            Chỉ thu thập thông tin kỹ thuật cơ bản (IP, User-Agent)
+          </span>
+          <span class="footer-link" id="footer-data-2">
+            Không bán/chia sẻ dữ liệu cá nhân cho bên thứ ba
+          </span>
+          <span class="footer-link" id="footer-data-3">
+            Bạn chịu trách nhiệm với danh sách proxy nhập vào
+          </span>
+          <span class="footer-link" id="footer-data-4">
+            Tuân thủ pháp luật Internet hiện hành
+          </span>
+        </div>
       </div>
-      <div class="footer-col">
-        <div class="footer-col-title" id="footer-contact-title">
+
+      <div class="col-12 col-md-3 footer-col">
+        <div class="footer-col-title fw-semibold mb-2" id="footer-contact-title">
           Liên hệ &amp; hỗ trợ
         </div>
-        <span class="footer-link" id="footer-support-email">
-          Email hỗ trợ:  ngotan1911@gmail.com
-        </span>
-        <span class="footer-link" id="footer-support-bug">Báo lỗi &amp; góp ý</span>
-        <span class="footer-link" id="footer-support-guide">Hướng dẫn sử dụng</span>
+        <div class="d-flex flex-column gap-1 small">
+          <span class="footer-link" id="footer-support-email">
+            Email hỗ trợ: ngotan1911@gmail.com
+          </span>
+          <span class="footer-link" id="footer-support-bug">Báo lỗi &amp; góp ý</span>
+          <span class="footer-link" id="footer-support-guide">Hướng dẫn sử dụng</span>
+        </div>
       </div>
     </div>
-    <div class="footer-large-bottom">
+  </div>
+
+  <div class="bg-body-secondary py-2 mt-3">
+    <div class="container footer-large-bottom text-center small">
       <span id="footer-bottom">
         Tiếp tục sử dụng đồng nghĩa bạn đồng ý với Điều khoản và Chính sách bảo mật.
       </span>
     </div>
-  </footer>
+  </div>
+</footer>
+
 
   <script>
     const i18n = {
@@ -283,7 +348,8 @@ separated by ':' and '@'"
         navProxy: "Kiểm tra Proxy",
         pageTitle: "Kiểm tra Proxy có xác thực",
         step1: "Bước 1: Chọn loại proxy và dán danh sách định dạng user:pass@ip:port.",
-        step2: 'Bước 2: Bấm "Kiểm tra proxy" để kiểm tra TCP + HTTP/SOCKS thật.',
+     step2: 'Bước 2: Bấm "Kiểm tra proxy" để kiểm tra proxy.',
+
         labelProxyType: "Loại proxy",
         optHttp: "HTTP / HTTPS",
         optSocks4: "SOCKS4",
@@ -332,8 +398,8 @@ separated by ':' and '@'"
         pageTitle: "Check authenticated proxies",
         step1:
           "Step 1: Choose proxy type and paste list in user:pass@ip:port format.",
-        step2:
-          'Step 2: Click "Check proxies" to run real TCP + HTTP/SOCKS tests.',
+       step2: 'Step 2: Click "Check proxies" to test the proxies.',
+
         labelProxyType: "Proxy type",
         optHttp: "HTTP / HTTPS",
         optSocks4: "SOCKS4",
@@ -382,8 +448,8 @@ separated by ':' and '@'"
         pageTitle: "인증형 프록시 점검",
         step1:
           "1단계: user:pass@ip:port 형식의 목록을 붙여넣습니다.",
-        step2:
-          '2단계: "프록시 확인"을 눌러 TCP + HTTP/SOCKS 실제 테스트를 수행합니다.',
+       step2: '2단계: "프록시 확인" 버튼을 눌러 프록시를 검사합니다.',
+
         labelProxyType: "프록시 유형",
         optHttp: "HTTP / HTTPS",
         optSocks4: "SOCKS4",
@@ -433,8 +499,8 @@ separated by ':' and '@'"
         pageTitle: "認証型プロキシの確認",
         step1:
           "ステップ1: user:pass@ip:port 形式のリストを貼り付けます.",
-        step2:
-          "ステップ2: 「プロキシをチェック」をクリックして TCP + HTTP/SOCKS の実テストを実行します.",
+      step2: 'ステップ2：「プロキシをチェック」をクリックしてプロキシを確認します。',
+
         labelProxyType: "プロキシの種類",
         optHttp: "HTTP / HTTPS",
         optSocks4: "SOCKS4",
@@ -487,8 +553,8 @@ separated by ':' and '@'"
         pageTitle: "ตรวจสอบพร็อกซีที่ต้องการยืนยันตัวตน",
         step1:
           "ขั้นตอนที่ 1: เลือกประเภทพร็อกซีและวางรายการรูปแบบ user:pass@ip:port",
-        step2:
-          'ขั้นตอนที่ 2: คลิก "ตรวจสอบพร็อกซี" เพื่อทำการทดสอบ TCP + HTTP/SOCKS จริง',
+       step2: 'ขั้นตอนที่ 2: คลิก "ตรวจสอบพร็อกซี" เพื่อตรวจสอบพร็อกซี',
+
         labelProxyType: "ประเภทพร็อกซี",
         optHttp: "HTTP / HTTPS",
         optSocks4: "SOCKS4",
@@ -532,7 +598,7 @@ separated by ':' and '@'"
           "ปฏิบัติตามกฎหมายอินเทอร์เน็ตที่เกี่ยวข้อง",
         footerContactTitle: "ติดต่อ & สนับสนุน",
         footerSupportEmail:
-          "อีเมลสนับสนุน:  ngotan1911@gmail.com",
+          "อีเมลสนับสนุน: support@example.com",
         footerSupportBug:
           "รายงานข้อบกพร่อง & เสนอฟีเจอร์",
         footerSupportGuide: "คู่มือการใช้งาน",
@@ -548,8 +614,8 @@ separated by ':' and '@'"
           "ກວດ Proxy ທີ່ຕ້ອງການການຢືນຢັນຕົວຕົນ",
         step1:
           "ຂັ້ນຕອນ 1: ເລືອກປະເພດ proxy ແລະວາງລາຍການຮູບແບບ user:pass@ip:port",
-        step2:
-          'ຂັ້ນຕອນ 2: ກົດ "ກວດ Proxy" ເພື່ອເຮັດການທົດສອບ TCP + HTTP/SOCKS ຈິງ',
+       step2: 'ຂັ້ນຕອນ 2: ກົດ "ກວດ Proxy" ເພື່ອກວດສອບ proxy',
+
         labelProxyType: "ປະເພດ proxy",
         optHttp: "HTTP / HTTPS",
         optSocks4: "SOCKS4",
@@ -593,7 +659,7 @@ separated by ':' and '@'"
           "ປະຕິບັດຕາມກົດໝາຍອິນເຕີເນັດທີ່ກ່ຽວຂ້ອງ",
         footerContactTitle: "ຕິດຕໍ່ & ສະໜັບສະໜູນ",
         footerSupportEmail:
-          "ອີເມວສະໜັບສະໜູນ:  ngotan1911@gmail.com",
+          "ອີເມວສະໜັບສະໜູນ: support@example.com",
         footerSupportBug:
           "ລາຍງານບັນຫາ & ແນະນຳຄຸນສົມບັດ",
         footerSupportGuide: "ຄູ່ມືການໃຊ້ງານ",
@@ -603,255 +669,251 @@ separated by ':' and '@'"
     };
 
     function getLangMeta(lang) {
-      const map = {
-        vi: { name: "Vietnam", flag: "https://flagcdn.com/w40/vn.png" },
-        en: { name: "United States", flag: "https://flagcdn.com/w40/us.png" },
-        ko: { name: "Korea", flag: "https://flagcdn.com/w40/kr.png" },
-        ja: { name: "Japan", flag: "https://flagcdn.com/w40/jp.png" },
-        th: { name: "Thailand", flag: "https://flagcdn.com/w40/th.png" },
-        lo: { name: "Laos", flag: "https://flagcdn.com/w40/la.png" }
-      };
-      return map[lang] || { name: lang.toUpperCase(), flag: "" };
-    }
-
-    function getBrowserLang() {
-      const langs =
-        (navigator.languages && navigator.languages.length
-          ? navigator.languages
-          : [navigator.language || "vi"]);
-      for (const l of langs) {
-        const code = l.split("-")[0].toLowerCase();
-        if (i18n[code]) return code;
-      }
-      return "vi";
-    }
-
-    function createLangSwitcher(currentLang) {
-      const select = document.getElementById("lang-switcher");
-      if (!select) return;
-      select.innerHTML = "";
-      Object.keys(i18n).forEach((lang) => {
-        const meta = getLangMeta(lang);
-        const opt = document.createElement("option");
-        opt.value = lang;
-        opt.textContent = meta.name;
-        if (lang === currentLang) opt.selected = true;
-        select.appendChild(opt);
-      });
-      select.onchange = () => loadLang(select.value);
-    }
-
-    function loadLang(lang) {
-      const t = i18n[lang] || i18n.vi;
-      const setText = (id, value) => {
-        const el = document.getElementById(id);
-        if (el) el.textContent = value;
-      };
-
-      setText("head-title", t.headTitle);
-      setText("nav-ip", t.navIp);
-      setText("nav-proxy", t.navProxy);
-
-      setText("page-title", t.pageTitle);
-      setText("step-text-1", t.step1);
-      const step2El = document.getElementById("step-text-2");
-      if (step2El) step2El.innerHTML = t.step2;
-
-      setText("label-proxy-type", t.labelProxyType);
-      setText("opt-http", t.optHttp);
-      setText("opt-socks4", t.optSocks4);
-      setText("opt-socks5", t.optSocks5);
-
-      setText("label-proxy-input", t.labelProxyInput);
-      const hintEl = document.getElementById("hint-text");
-      if (hintEl) hintEl.innerHTML = t.hint.replace(/\n/g, "<br>");
-
-      setText("check-btn", t.btnCheck);
-      setText("status-text", t.statusInit);
-
-      setText("th-index", t.thIndex);
-      setText("th-proxy", t.thProxy);
-      setText("th-type", t.thType);
-      setText("th-status", t.thStatus);
-      setText("th-latency", t.thLatency);
-      setText("th-note", t.thNote);
-
-      setText("footer-logo", t.footerLogo);
-      setText("footer-desc", t.footerDesc);
-      setText("footer-terms-title", t.footerTermsTitle);
-      setText("footer-terms-use", t.footerTermsUse);
-      setText("footer-privacy", t.footerPrivacy);
-      setText("footer-cookie", t.footerCookie);
-      setText("footer-liability", t.footerLiability);
-      setText("footer-data-title", t.footerDataTitle);
-      setText("footer-data-1", t.footerData1);
-      setText("footer-data-2", t.footerData2);
-      setText("footer-data-3", t.footerData3);
-      setText("footer-data-4", t.footerData4);
-      setText("footer-contact-title", t.footerContactTitle);
-      setText("footer-support-email", t.footerSupportEmail);
-      setText("footer-support-bug", t.footerSupportBug);
-      setText("footer-support-guide", t.footerSupportGuide);
-      setText("footer-bottom", t.footerBottom);
-
-      const meta = getLangMeta(lang);
-      const flagEl = document.getElementById("lang-flag");
-      const nameEl = document.getElementById("lang-name");
-      if (flagEl) {
-        flagEl.style.backgroundImage = meta.flag
-          ? `url('${meta.flag}')`
-          : "none";
-      }
-      if (nameEl) nameEl.textContent = meta.name;
-
-      createLangSwitcher(lang);
-      localStorage.setItem("lang_proxy", lang);
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const saved =
-        localStorage.getItem("lang_proxy") || localStorage.getItem("lang");
-      const lang = saved || getBrowserLang();
-      loadLang(lang);
-    });
-  </script>
-
-  <script>
-   async function checkProxyReal(proxyString, type) {
-  // Tự động chọn URL backend theo môi trường
-  const API_BASE = window.location.hostname.includes("localhost")
-    ? "http://localhost:4000"
-    : "https://netcheck.onrender.com";
-
-  const resp = await fetch(`${API_BASE}/api/check-proxy-strong`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      proxy: proxyString,
-      type: type,
-      timeoutMs: 20000
-    })
-  });
-
-  if (!resp.ok) {
-    throw new Error("HTTP " + resp.status);
+    const map = {
+      vi: { name: "Vietnam",       flag: "https://flagcdn.com/w40/vn.png" },
+      en: { name: "United States", flag: "https://flagcdn.com/w40/us.png" },
+      ko: { name: "Korea",         flag: "https://flagcdn.com/w40/kr.png" },
+      ja: { name: "Japan",         flag: "https://flagcdn.com/w40/jp.png" },
+      th: { name: "Thailand",      flag: "https://flagcdn.com/w40/th.png" },
+      lo: { name: "Laos",          flag: "https://flagcdn.com/w40/la.png" }
+    };
+    return map[lang] || { name: lang.toUpperCase(), flag: "" };
   }
 
-  return resp.json();
-}
-
-    function isAuthFormat(line) {
-      if (!line.includes("@")) return false;
-      const [auth, host] = line.split("@");
-      if (!auth || !host) return false;
-      if (!auth.includes(":")) return false;
-      if (!host.includes(":")) return false;
-      const portPart = host.split(":")[1];
-      const port = parseInt(portPart, 10);
-      return !Number.isNaN(port) && port >= 1 && port <= 65535;
+  function getBrowserLang() {
+    const langs = (navigator.languages && navigator.languages.length
+      ? navigator.languages
+      : [navigator.language || "vi"]);
+    for (const l of langs) {
+      const code = l.split("-")[0].toLowerCase();
+      if (i18n[code]) return code;
     }
+    return "vi";
+  }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const inputEl = document.getElementById("proxy-input");
-      const typeEl = document.getElementById("proxy-type");
-      const btn = document.getElementById("check-btn");
-      const statusEl = document.getElementById("status-text");
-      const bodyEl = document.getElementById("result-body");
-
-      btn.addEventListener("click", async () => {
-        const lang =
-          localStorage.getItem("lang_proxy") ||
-          localStorage.getItem("lang") ||
-          "vi";
-        const t = i18n[lang] || i18n.vi;
-
-        const lines = inputEl.value
-          .split("\n")
-          .map((l) => l.trim())
-          .filter((l) => l.length > 0 && isAuthFormat(l));
-
-        const type = typeEl.value;
-        bodyEl.innerHTML = "";
-
-        if (lines.length === 0) {
-          statusEl.textContent = t.statusInit;
-          return;
-        }
-
-        btn.disabled = true;
-        statusEl.textContent = t.tagChecking;
-
-        let index = 0;
-        for (const line of lines) {
-          index++;
-
-          const row = document.createElement("tr");
-          const cellIndex = document.createElement("td");
-          const cellProxy = document.createElement("td");
-          const cellType = document.createElement("td");
-          const cellStatus = document.createElement("td");
-          const cellLatency = document.createElement("td");
-          const cellNote = document.createElement("td");
-
-          cellIndex.textContent = index;
-          cellProxy.textContent = line;
-          cellType.textContent = type.toUpperCase();
-          cellStatus.innerHTML = `<span class="tag-unk">${t.tagChecking}</span>`;
-          cellLatency.textContent = "-";
-          cellNote.textContent = "";
-
-          row.appendChild(cellIndex);
-          row.appendChild(cellProxy);
-          row.appendChild(cellType);
-          row.appendChild(cellStatus);
-          row.appendChild(cellLatency);
-          row.appendChild(cellNote);
-          bodyEl.appendChild(row);
-
-          try {
-            const result = await checkProxyReal(line, type);
-            const tcp = result.tcp || {};
-            const http = result.http || {};
-
-            const latency =
-              http.latency != null ? http.latency : tcp.latency;
-
-            if (result.alive) {
-              cellStatus.innerHTML = `<span class="tag-ok">${t.tagAlive}</span>`;
-              cellLatency.textContent =
-                latency != null ? String(latency) : "-";
-
-              if (http.alive) {
-                cellNote.textContent =
-                  `TCP: ${tcp.message || "OK"}; HTTP: OK` +
-                  (http.statusCode
-                    ? ` (status ${http.statusCode})`
-                    : "") +
-                  (http.tries ? `, tries: ${http.tries}` : "");
-              } else {
-                cellNote.textContent = tcp.message || "TCP OK";
-              }
-            } else {
-              cellStatus.innerHTML = `<span class="tag-dead">${t.tagDead}</span>`;
-              cellLatency.textContent =
-                latency != null ? String(latency) : "-";
-              const msg =
-                (http && http.error) ||
-                (tcp && tcp.message) ||
-                "No response";
-              cellNote.textContent = msg;
-            }
-          } catch (e) {
-            cellStatus.innerHTML = `<span class="tag-dead">${t.tagError}</span>`;
-            cellLatency.textContent = "-";
-            cellNote.textContent = "Backend error: " + e.message;
-          }
-        }
-
-        statusEl.textContent = t.statusInit;
-        btn.disabled = false;
-      });
+  function createLangSwitcher(currentLang) {
+    const select = document.getElementById("lang-switcher");
+    if (!select) return;
+    select.innerHTML = "";
+    Object.keys(i18n).forEach(lang => {
+      const meta = getLangMeta(lang);
+      const opt = document.createElement("option");
+      opt.value = lang;
+      opt.textContent = meta.name;
+      if (lang === currentLang) opt.selected = true;
+      select.appendChild(opt);
     });
-  </script>
+    select.onchange = () => loadLang(select.value);
+  }
+
+  function loadLang(lang) {
+    const t = i18n[lang] || i18n.vi;
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    setText("head-title", t.headTitle);
+    document.title = t.headTitle;
+
+    setText("nav-ip", t.navIp);
+    setText("nav-proxy", t.navProxy);
+
+    setText("page-title", t.pageTitle);
+    setText("step-text-1", t.step1);
+    const step2El = document.getElementById("step-text-2");
+    if (step2El) step2El.innerHTML = t.step2;
+
+    setText("label-proxy-type", t.labelProxyType);
+    setText("opt-http", t.optHttp);
+    setText("opt-socks4", t.optSocks4);
+    setText("opt-socks5", t.optSocks5);
+
+    setText("label-proxy-input", t.labelProxyInput);
+    const hintEl = document.getElementById("hint-text");
+    if (hintEl) hintEl.innerHTML = t.hint.replace(/\n/g, "<br>");
+
+    setText("check-btn", t.btnCheck);
+    setText("status-text", t.statusInit);
+
+    setText("th-index", t.thIndex);
+    setText("th-proxy", t.thProxy);
+    setText("th-type", t.thType);
+    setText("th-status", t.thStatus);
+    setText("th-latency", t.thLatency);
+    setText("th-note", t.thNote);
+
+    setText("footer-logo", t.footerLogo);
+    setText("footer-desc", t.footerDesc);
+    setText("footer-terms-title", t.footerTermsTitle);
+    setText("footer-terms-use", t.footerTermsUse);
+    setText("footer-privacy", t.footerPrivacy);
+    setText("footer-cookie", t.footerCookie);
+    setText("footer-liability", t.footerLiability);
+    setText("footer-data-title", t.footerDataTitle);
+    setText("footer-data-1", t.footerData1);
+    setText("footer-data-2", t.footerData2);
+    setText("footer-data-3", t.footerData3);
+    setText("footer-data-4", t.footerData4);
+    setText("footer-contact-title", t.footerContactTitle);
+    setText("footer-support-email", t.footerSupportEmail);
+    setText("footer-support-bug", t.footerSupportBug);
+    setText("footer-support-guide", t.footerSupportGuide);
+    setText("footer-bottom", t.footerBottom);
+
+    const meta = getLangMeta(lang);
+    const flagEl = document.getElementById("lang-flag");
+    const nameEl = document.getElementById("lang-name");
+    if (flagEl) {
+      flagEl.style.backgroundImage = meta.flag ? `url('${meta.flag}')` : "none";
+    }
+    if (nameEl) nameEl.textContent = meta.name;
+
+    createLangSwitcher(lang);
+    localStorage.setItem("lang_proxy", lang);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const saved = localStorage.getItem("lang_proxy") || localStorage.getItem("lang");
+    const lang = saved || getBrowserLang();
+    loadLang(lang);
+  });
+</script>
+
+<script>
+  async function checkProxyReal(proxyString, type) {
+    const API_BASE = window.location.hostname.includes("localhost")
+      ? "http://localhost:4000"
+      : "https://netcheck.onrender.com";
+
+    const resp = await fetch(`${API_BASE}/api/check-proxy-strong`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        proxy: proxyString,
+        type: type,
+        timeoutMs: 20000
+      })
+    });
+
+    if (!resp.ok) {
+      throw new Error("HTTP " + resp.status);
+    }
+    return resp.json();
+  }
+
+  function isAuthFormat(line) {
+    if (!line.includes("@")) return false;
+    const [auth, host] = line.split("@");
+    if (!auth || !host) return false;
+    if (!auth.includes(":")) return false;
+    if (!host.includes(":")) return false;
+    const portPart = host.split(":")[1];
+    const port = parseInt(portPart, 10);
+    return !Number.isNaN(port) && port >= 1 && port <= 65535;
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const inputEl = document.getElementById("proxy-input");
+    const typeEl = document.getElementById("proxy-type");
+    const btn = document.getElementById("check-btn");
+    const statusEl = document.getElementById("status-text");
+    const bodyEl = document.getElementById("result-body");
+
+    btn.addEventListener("click", async () => {
+      const lang =
+        localStorage.getItem("lang_proxy") ||
+        localStorage.getItem("lang") ||
+        "vi";
+      const t = i18n[lang] || i18n.vi;
+
+      const lines = inputEl.value
+        .split("\n")
+        .map(l => l.trim())
+        .filter(l => l.length > 0 && isAuthFormat(l));
+
+      const type = typeEl.value;
+      bodyEl.innerHTML = "";
+
+      if (lines.length === 0) {
+        statusEl.textContent = t.statusInit;
+        return;
+      }
+
+      btn.disabled = true;
+      statusEl.textContent = t.tagChecking;
+
+      let index = 0;
+      for (const line of lines) {
+        index++;
+
+        const row = document.createElement("tr");
+        const cellIndex = document.createElement("td");
+        const cellProxy = document.createElement("td");
+        const cellType = document.createElement("td");
+        const cellStatus = document.createElement("td");
+        const cellLatency = document.createElement("td");
+        const cellNote = document.createElement("td");
+
+        cellIndex.textContent = index;
+        cellProxy.textContent = line;
+        cellType.textContent = type.toUpperCase();
+        cellStatus.innerHTML = `<span class="tag-unk">${t.tagChecking}</span>`;
+        cellLatency.textContent = "-";
+        cellNote.textContent = "";
+
+        row.appendChild(cellIndex);
+        row.appendChild(cellProxy);
+        row.appendChild(cellType);
+        row.appendChild(cellStatus);
+        row.appendChild(cellLatency);
+        row.appendChild(cellNote);
+        bodyEl.appendChild(row);
+
+        try {
+          const result = await checkProxyReal(line, type);
+          const tcp = result.tcp || {};
+          const http = result.http || {};
+          const latency =
+            http.latency != null ? http.latency : tcp.latency;
+
+          if (result.alive) {
+            cellStatus.innerHTML = `<span class="tag-ok">${t.tagAlive}</span>`;
+            cellLatency.textContent =
+              latency != null ? String(latency) : "-";
+
+            if (http.alive) {
+              cellNote.textContent =
+                `TCP: ${tcp.message || "OK"}; HTTP: OK` +
+                (http.statusCode ? ` (status ${http.statusCode})` : "") +
+                (http.tries ? `, tries: ${http.tries}` : "");
+            } else {
+              cellNote.textContent = tcp.message || "TCP OK";
+            }
+          } else {
+            cellStatus.innerHTML = `<span class="tag-dead">${t.tagDead}</span>`;
+            cellLatency.textContent =
+              latency != null ? String(latency) : "-";
+            const msg =
+              (http && http.error) ||
+              (tcp && tcp.message) ||
+              "No response";
+            cellNote.textContent = msg;
+          }
+        } catch (e) {
+          cellStatus.innerHTML = `<span class="tag-dead">${t.tagError}</span>`;
+          cellLatency.textContent = "-";
+          cellNote.textContent = "Backend error: " + e.message;
+        }
+      }
+
+      statusEl.textContent = t.statusInit;
+      btn.disabled = false;
+    });
+  });
+</script>
+
+<!-- Bootstrap 5 JS bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

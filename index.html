@@ -2,102 +2,158 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title id="head-title">NetCheck</title>
   <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- CSS riêng của bạn -->
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <!-- Logo + brand -->
+    <a class="navbar-brand d-flex align-items-center" href="index.html">
+      <img src="logo.png" alt="NetCheck logo" class="me-2" style="height:32px; width:auto;">
+      <span class="logo-text fw-semibold">NetCheck</span>
+    </a>
 
- 
-<nav class="navbar">
-  <div class="nav-logo">
-    <img src="logo.png" alt="ProxyTools">
-    <span class="logo-text">NetCheck</span>
-  </div>
+    <!-- Nút toggle trên mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <div class="nav-links">
-    <a href="index.html" class="active" id="nav-ip">Kiểm tra IP</a>
-    <a href="proxy.html" id="nav-proxy">Kiểm tra Proxy</a>
-  </div>
-<div class="nav-lang">
-  <div class="lang-display" id="lang-display">
-    <span class="lang-flag" id="lang-flag"></span>
-    <span class="lang-name" id="lang-name">Vietnam</span>
-  </div>
-  <select id="lang-switcher"></select>
-</div>
+    <!-- Nội dung navbar -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <!-- Links trái -->
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a href="index.html" class="nav-link active" id="nav-ip">Kiểm tra IP</a>
+        </li>
+        <li class="nav-item">
+          <a href="proxy.html" class="nav-link" id="nav-proxy">Kiểm tra Proxy</a>
+        </li>
+      </ul>
 
+      <!-- Chọn ngôn ngữ bên phải -->
+      <div class="d-flex align-items-center gap-2">
+        <div class="d-flex align-items-center" id="lang-display" style="cursor:pointer;">
+          <span class="lang-flag me-2" id="lang-flag"
+                style="display:inline-block;width:24px;height:16px;background-size:cover;background-position:center;border-radius:2px;">
+          </span>
+          <span class="lang-name text-white-50" id="lang-name">Vietnam</span>
+        </div>
+        <select id="lang-switcher" class="form-select form-select-sm" style="width:auto;"></select>
+      </div>
+    </div>
+  </div>
 </nav>
 
+<!-- MAIN CONTENT -->
+<main class="container my-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h1 id="page-title" class="h3 mb-4">Thông tin chi tiết IP</h1>
 
+          <p class="mb-2">
+            <strong id="label-ip">Địa chỉ IP:</strong>
+            <span id="ip" class="ms-1">Đang tải...</span>
+          </p>
+          <p class="mb-2">
+            <strong id="label-country">Quốc gia:</strong>
+            <span id="country" class="ms-1">Đang tải...</span>
+          </p>
+          <p class="mb-3">
+            <strong id="label-isp">Nhà cung cấp mạng (ISP):</strong>
+            <span id="isp" class="ms-1">Đang tải...</span>
+          </p>
 
+          <div id="map-container"
+               class="mt-3 rounded-3"
+               style="width:100%; height:300px; overflow:hidden;">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
 
-
-  <main class="container">
-    <h1 id="page-title">Thông tin chi tiết IP</h1>
-
-    <p><strong id="label-ip">Địa chỉ IP:</strong> <span id="ip">Đang tải...</span></p>
-    <p><strong id="label-country">Quốc gia:</strong> <span id="country">Đang tải...</span></p>
-    <p><strong id="label-isp">Nhà cung cấp mạng (ISP):</strong> <span id="isp">Đang tải...</span></p>
-
-    <div id="map-container"
-         style="width:100%; height:400px; margin-top:20px; border-radius:8px; overflow:hidden;"></div>
-  </main>
-
-  <footer class="footer-large">
-    <div class="footer-large-inner">
-      <div class="footer-col footer-brand">
-        <div class="footer-logo" id="footer-logo">NetCheck</div>
-        <p class="footer-desc" id="footer-desc">
+<!-- FOOTER -->
+<footer class="mt-auto bg-light border-top pt-4">
+  <div class="container footer-large-inner pb-3">
+    <div class="row gy-4">
+      <!-- Brand -->
+      <div class="col-12 col-md-3 footer-col footer-brand">
+        <div class="footer-logo fw-bold mb-2" id="footer-logo">NetCheck</div>
+        <p class="footer-desc small mb-0" id="footer-desc">
           Công cụ mạng mini giúp bạn xem IP, kiểm tra proxy HTTP / SOCKS và một số thông tin cơ bản khác.
           Đây chỉ là công cụ hỗ trợ tham khảo, không phải dịch vụ VPN hay bảo mật chuyên nghiệp.
         </p>
       </div>
 
-      <div class="footer-col" id="footer-terms-col">
-        <div class="footer-col-title" id="footer-terms-title">Điều khoản &amp; chính sách</div>
-        <span class="footer-link" id="footer-terms-use">
-          Điều khoản sử dụng: chỉ dùng công cụ cho mục đích hợp pháp.
-        </span>
-        <span class="footer-link" id="footer-privacy">
-          Chính sách bảo mật: không thu thập thêm dữ liệu cá nhân ngoài thông tin kỹ thuật cần thiết.
-        </span>
-        <span class="footer-link" id="footer-cookie">
-          Chính sách cookie: chỉ dùng cookie (nếu có) để cải thiện trải nghiệm.
-        </span>
-        <span class="footer-link" id="footer-liability">
-          Giới hạn trách nhiệm: kết quả kiểm tra chỉ mang tính tham khảo, bạn tự chịu trách nhiệm khi sử dụng.
-        </span>
+      <!-- Terms -->
+      <div class="col-12 col-md-3 footer-col" id="footer-terms-col">
+        <div class="footer-col-title fw-semibold mb-2" id="footer-terms-title">Điều khoản &amp; chính sách</div>
+        <div class="d-flex flex-column gap-1 small">
+          <span class="footer-link" id="footer-terms-use">
+            Điều khoản sử dụng: chỉ dùng công cụ cho mục đích hợp pháp.
+          </span>
+          <span class="footer-link" id="footer-privacy">
+            Chính sách bảo mật: không thu thập thêm dữ liệu cá nhân ngoài thông tin kỹ thuật cần thiết.
+          </span>
+          <span class="footer-link" id="footer-cookie">
+            Chính sách cookie: chỉ dùng cookie (nếu có) để cải thiện trải nghiệm.
+          </span>
+          <span class="footer-link" id="footer-liability">
+            Giới hạn trách nhiệm: kết quả kiểm tra chỉ mang tính tham khảo, bạn tự chịu trách nhiệm khi sử dụng.
+          </span>
+        </div>
       </div>
 
-      <div class="footer-col">
-        <div class="footer-col-title" id="footer-data-title">Dữ liệu &amp; bảo mật</div>
-        <span class="footer-link" id="footer-data-1">Chỉ thu thập thông tin kỹ thuật cơ bản (IP, User-Agent)</span>
-        <span class="footer-link" id="footer-data-2">Không bán hoặc chia sẻ dữ liệu cá nhân cho bên thứ ba</span>
-        <span class="footer-link" id="footer-data-3">Người dùng tự chịu trách nhiệm với nội dung proxy nhập vào</span>
-        <span class="footer-link" id="footer-data-4">Tuân thủ pháp luật hiện hành về sử dụng Internet</span>
+      <!-- Data & Security -->
+      <div class="col-12 col-md-3 footer-col">
+        <div class="footer-col-title fw-semibold mb-2" id="footer-data-title">Dữ liệu &amp; bảo mật</div>
+        <div class="d-flex flex-column gap-1 small">
+          <span class="footer-link" id="footer-data-1">Chỉ thu thập thông tin kỹ thuật cơ bản (IP, User-Agent)</span>
+          <span class="footer-link" id="footer-data-2">Không bán hoặc chia sẻ dữ liệu cá nhân cho bên thứ ba</span>
+          <span class="footer-link" id="footer-data-3">Người dùng tự chịu trách nhiệm với nội dung proxy nhập vào</span>
+          <span class="footer-link" id="footer-data-4">Tuân thủ pháp luật hiện hành về sử dụng Internet</span>
+        </div>
       </div>
 
-      <div class="footer-col">
-        <div class="footer-col-title" id="footer-contact-title">Liên hệ &amp; hỗ trợ</div>
-        <span class="footer-link" id="footer-support-email">Email hỗ trợ: support@example.com</span>
-        <span class="footer-link" id="footer-support-bug">Báo lỗi &amp; góp ý tính năng</span>
-        <span class="footer-link" id="footer-support-guide">Hướng dẫn sử dụng công cụ</span>
+      <!-- Contact -->
+      <div class="col-12 col-md-3 footer-col">
+        <div class="footer-col-title fw-semibold mb-2" id="footer-contact-title">Liên hệ &amp; hỗ trợ</div>
+        <div class="d-flex flex-column gap-1 small">
+          <span class="footer-link" id="footer-support-email">Email hỗ trợ: ngotan1911@gmail.com</span>
+          <span class="footer-link" id="footer-support-bug">Báo lỗi &amp; góp ý tính năng</span>
+          <span class="footer-link" id="footer-support-guide">Hướng dẫn sử dụng công cụ</span>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="footer-large-bottom">
+  <div class="bg-body-secondary py-2 mt-3">
+    <div class="container footer-large-bottom text-center small">
       <span id="footer-bottom">
         Bằng việc tiếp tục sử dụng trang này, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật của chúng tôi.
       </span>
     </div>
-  </footer>
+  </div>
+</footer>
 
- <script>
-  // 1. Bảng dịch: Việt Nam, Lào, Thái, Hàn, Anh, Nhật
+<!-- i18n + ngôn ngữ -->
+<script>
   const i18n = {
-    vi: { /* giữ nguyên nội dung bạn đã có */ 
+    vi: {
       headTitle: "Kiểm tra IP",
       navIp: "Kiểm tra IP",
       navProxy: "Kiểm tra Proxy",
@@ -118,7 +174,7 @@
       footerData3: "Người dùng tự chịu trách nhiệm với nội dung proxy nhập vào",
       footerData4: "Tuân thủ pháp luật hiện hành về sử dụng Internet",
       footerContactTitle: "Liên hệ & hỗ trợ",
-      footerSupportEmail: "Email hỗ trợ:  ngotan1911@gmail.com",
+      footerSupportEmail: "Email hỗ trợ: ngotan1911@gmail.com",
       footerSupportBug: "Báo lỗi & góp ý tính năng",
       footerSupportGuide: "Hướng dẫn sử dụng công cụ",
       footerBottom: "Bằng việc tiếp tục sử dụng trang này, bạn đồng ý với Điều khoản sử dụng và Chính sách bảo mật của chúng tôi."
@@ -144,7 +200,7 @@
       footerData3: "User is responsible for proxy input content",
       footerData4: "Comply with current Internet laws",
       footerContactTitle: "Contact & Support",
-      footerSupportEmail: "Support email:  ngotan1911@gmail.com",
+      footerSupportEmail: "Support email: ngotan1911@gmail.com",
       footerSupportBug: "Report bugs & feature requests",
       footerSupportGuide: "Tool usage guide",
       footerBottom: "By continuing to use this site, you agree to our Terms of Use and Privacy Policy."
@@ -170,7 +226,7 @@
       footerData3: "사용자가 입력한 프록시 내용에 대해 책임",
       footerData4: "현행 인터넷 법규 준수",
       footerContactTitle: "연락처 및 지원",
-      footerSupportEmail: "지원 이메일:  ngotan1911@gmail.com",
+      footerSupportEmail: "지원 이메일: ngotan1911@gmail.com",
       footerSupportBug: "버그 보고 및 기능 요청",
       footerSupportGuide: "도구 사용 안내",
       footerBottom: "본 사이트를 계속 사용함으로써 당사의 이용 약관 및 개인정보 보호정책에 동의하는 것으로 간주됩니다."
@@ -186,7 +242,7 @@
       footerLogo: "NetCheck",
       footerDesc: "IP、HTTP / SOCKSプロキシ、および基本情報をすばやく確認できる軽量ネットワークツールです。専門的なVPNやセキュリティサービスではありません。",
       footerTermsTitle: "利用規約とポリシー",
-      footerTermsUse: "利用規約: 合法的な目的のみに使用してください。",
+      footerTermsUse: "利用規약: 合法的な目的のみに使用してください。",
       footerPrivacy: "プライバシーポリシー: 技術情報以外の追加データは収集しません。",
       footerCookie: "クッキーポリシー: 利用体験向上のために最小限のクッキー만 사용합니다.",
       footerLiability: "責任の制限: テスト結果は参考용です。使用は自己責任でお願いします。",
@@ -210,7 +266,7 @@
       labelCountry: "ประเทศ:",
       labelIsp: "ผู้ให้บริการอินเทอร์เน็ต (ISP):",
       footerLogo: "NetCheck",
-      footerDesc: "เครื่องมือเครือข่ายขนาดเล็กสำหรับตรวจสอบ IP, HTTP / SOCKS โปรกซี และข้อมูลพื้นฐานอื่น ๆ นี่เป็นเครื่องมือสนับสนุน ไม่ใช่บริการ VPN หรือความปลอดภัยระดับมืออาชีพ",
+      footerDesc: "เครื่องมือเครือข่ายขนาดเล็กสำหรับตรวจสอบ IP, HTTP / SOCKS พร็อกซี และข้อมูลพื้นฐานอื่น ๆ นี่เป็นเครื่องมือสนับสนุน ไม่ใช่บริการ VPN หรือความปลอดภัยระดับมืออาชีพ",
       footerTermsTitle: "ข้อกำหนดและนโยบาย",
       footerTermsUse: "ข้อกำหนดในการใช้งาน: ใช้เพื่อวัตถุประสงค์ที่ถูกกฎหมายเท่านั้น",
       footerPrivacy: "นโยบายความเป็นส่วนตัว: ไม่เก็บข้อมูลส่วนบุคคลเพิ่มเติมนอกเหนือข้อมูลทางเทคนิค",
@@ -222,7 +278,7 @@
       footerData3: "ผู้ใช้รับผิดชอบต่อเนื้อหาพร็อกซีที่ป้อนเข้าไป",
       footerData4: "ปฏิบัติตามกฎหมายอินเทอร์เน็ตที่บังคับใช้",
       footerContactTitle: "ติดต่อและสนับสนุน",
-      footerSupportEmail: "อีเมลสนับสนุน:  ngotan1911@gmail.com",
+      footerSupportEmail: "อีเมลสนับสนุน: ngotan1911@gmail.com",
       footerSupportBug: "รายงานข้อผิดพลาดและข้อเสนอแนะ",
       footerSupportGuide: "คู่มือการใช้งานเครื่องมือ",
       footerBottom: "โดยการใช้งานเว็บไซต์นี้ต่อไป ท่านตกลงยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัวของเรา"
@@ -255,7 +311,6 @@
     }
   };
 
-  // 2. Lấy meta cờ + tên
   function getLangMeta(lang) {
     switch (lang) {
       case "vi": return { name: "Vietnam",       flag: "https://flagcdn.com/w40/vn.png" };
@@ -268,7 +323,6 @@
     }
   }
 
-  // 3. Ngôn ngữ từ trình duyệt
   function getBrowserLang() {
     const langs = navigator.languages && navigator.languages.length
       ? navigator.languages
@@ -280,7 +334,6 @@
     return "vi";
   }
 
-  // 4. Tạo dropdown
   function createLangSwitcher(currentLang) {
     const select = document.getElementById("lang-switcher");
     if (!select) return;
@@ -296,7 +349,6 @@
     select.onchange = () => loadLang(select.value);
   }
 
-  // 5. Hàm loadLang DUY NHẤT
   function loadLang(lang) {
     const t = i18n[lang] || i18n.vi;
 
@@ -306,6 +358,8 @@
     };
 
     setText("head-title", t.headTitle);
+    document.title = t.headTitle;
+
     setText("nav-ip", t.navIp);
     setText("nav-proxy", t.navProxy);
     setText("page-title", t.pageTitle);
@@ -331,19 +385,16 @@
     setText("footer-support-guide", t.footerSupportGuide);
     setText("footer-bottom", t.footerBottom);
 
-    // Cập nhật cờ + tên
     const meta = getLangMeta(lang);
     const flagEl = document.getElementById("lang-flag");
     const nameEl = document.getElementById("lang-name");
     if (flagEl) flagEl.style.backgroundImage = meta.flag ? `url('${meta.flag}')` : "none";
     if (nameEl) nameEl.textContent = meta.name;
 
-    // Dropdown + lưu
     createLangSwitcher(lang);
     localStorage.setItem("lang", lang);
   }
 
-  // 6. Khởi tạo
   document.addEventListener("DOMContentLoaded", () => {
     const saved = localStorage.getItem("lang");
     const lang = saved || getBrowserLang();
@@ -351,8 +402,10 @@
   });
 </script>
 
+<!-- Script lấy IP + map -->
+<script src="script-ip.js"></script>
 
-  <!-- Bạn giữ nguyên hoặc thay script-ip.js để lấy IP + map như đã sửa bằng ipapi.co -->
-  <script src="script-ip.js"></script>
+<!-- Bootstrap 5 JS bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
