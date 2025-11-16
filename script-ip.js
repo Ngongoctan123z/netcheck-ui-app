@@ -5,7 +5,8 @@ window.addEventListener('DOMContentLoaded', () => {
   const mapContainer = document.getElementById('map-container');
 
   // SỬA: Dùng local để dev, tránh lỗi mixed content/URL sai
-  const API_BASE = 'http://localhost:4000';  // Đổi thành 'https://netcheck-api-server.onrender.com' khi deploy Render online
+ const API_BASE = 'https://netcheck-api-server.onrender.com';
+  // Đổi thành 'https://netcheck-api-server.onrender.com' khi deploy Render online
 
   console.log('Calling API:', `${API_BASE}/ip-info`);  // Log để debug
 
