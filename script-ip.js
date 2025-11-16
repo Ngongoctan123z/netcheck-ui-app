@@ -1,114 +1,111 @@
-window.addEventListener('DOMContentLoaded', () => {
-  const ipDisplay = document.getElementById('ip');
-  const countryDisplay = document.getElementById('country');
-  const ispDisplay = document.getElementById('isp');
-  const mapContainer = document.getElementById('map-container');
+// script-ip.js
+// Lấy thông tin IP với nhiều API fallback để tránh lỗi
 
-  // SỬA: Dùng local để dev, tránh lỗi mixed content/URL sai
- const API_BASE = 'https://netcheck-api-server.onrender.com';
-  // Đổi thành 'https://netcheck-api-server.onrender.com' khi deploy Render online
+async function fetchFromIpwho() {
+  const res = await fetch("https://ipwho.is/");
+  if (!res.ok) throw new Error("ipwho.is lỗi");
+  const data = await res.json();
+  return {
+    ip: data.ip,
+    country: data.country,
+    isp: data.connection?.isp,
+    lat: data.latitude,
+    lon: data.longitude
+  };
+}
 
-  console.log('Calling API:', `${API_BASE}/ip-info`);  // Log để debug
+async function fetchFromIpapi() {
+  const res = await fetch("https://ipapi.co/json/");
+  if (!res.ok) throw new Error("ipapi.co lỗi");
+  const data = await res.json();
+  return {
+    ip: data.ip,
+    country: data.country_name,
+    isp: data.org,
+    lat: data.latitude,
+    lon: data.longitude
+  };
+}
 
-  fetch(`${API_BASE}/ip-info`)
-    .then(response => {
-      console.log('Response status:', response.status);  // Log để debug
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
+async function fetchFromIpinfo() {
+  const res = await fetch("https://ipinfo.io/json?token=YOUR_TOKEN"); // nếu có token
+  if (!res.ok) throw new Error("ipinfo.io lỗi");
+  const data = await res.json();
+  const [lat, lon] = data.loc.split(",");
+  return {
+    ip: data.ip,
+    country: data.country,
+    isp: data.org,
+    lat: parseFloat(lat),
+    lon: parseFloat(lon)
+  };
+}
+
+async function fetchIpInfo() {
+  let info = null;
+  try {
+    info = await fetchFromIpwho();
+  } catch (e1) {
+    console.warn("ipwho.is lỗi:", e1);
+    try {
+      info = await fetchFromIpapi();
+    } catch (e2) {
+      console.warn("ipapi.co lỗi:", e2);
+      try {
+        info = await fetchFromIpinfo();
+      } catch (e3) {
+        console.error("ipinfo.io lỗi:", e3);
       }
-      return response.json();
-    })
-    .then(data => {
-      console.log('Received data:', data);  // Log để debug
-      ipDisplay.textContent = data.query || 'N/A';
-      countryDisplay.textContent = data.country || 'N/A';
-      ispDisplay.textContent = data.isp || 'N/A';
-
-      const lat = data.lat;
-      const lon = data.lon;
-
-      if (lat && lon) {
-        mapContainer.innerHTML = `<iframe 
-          width="100%" 
-          height="100%" 
-          frameborder="0" 
-          style="border:0; border-radius: 8px;"
-          referrerpolicy="no-referrer-when-downgrade"
-          src="https://maps.google.com/maps?q=${lat},${lon}&z=13&output=embed">
-        </iframe>`;
-      } else {
-        mapContainer.textContent = 'Không thể lấy tọa độ để hiển thị bản đồ';
-      }
-    })
-    .catch(error => {
-      console.error('Lỗi khi lấy thông tin IP:', error);  // Log lỗi để debug
-      ipDisplay.textContent = 'Không thể lấy thông tin';
-      countryDisplay.textContent = 'Không thể lấy thông tin';
-      ispDisplay.textContent = 'Không thể lấy thông tin';
-      mapContainer.textContent = 'Không thể tải bản đồ';
-    });
-
-  // THÊM MỚI: Phần kiểm tra proxy (tích hợp vào cùng file, gọi /api/check-proxy-strong)
-  const proxyInput = document.getElementById('proxy-input');
-  const typeSelect = document.getElementById('type-select');
-  const testBtn = document.getElementById('test-btn');
-  const resultDiv = document.getElementById('result');  // Div hiển thị kết quả (thêm ID="result" ở HTML nếu chưa)
-
-  if (testBtn) {
-    testBtn.addEventListener('click', testProxy);  // Gán event cho nút Test
-  }
-
-  function testProxy() {
-    const proxyValue = proxyInput ? proxyInput.value.trim() : '';
-    const selectedType = typeSelect ? typeSelect.value : 'http';
-    if (!proxyValue) {
-      alert('Nhập proxy (format: user:pass@ip:port)');
-      return;
     }
-
-    console.log('Testing proxy:', proxyValue, 'Type:', selectedType);  // Log debug
-
-    fetch(`${API_BASE}/api/check-proxy-strong`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        proxy: proxyValue,  // Single proxy string (backend tự parse user:pass@ip:port)
-        type: selectedType,  // HTTP/HTTPS/SOCKS4/SOCKS5 từ dropdown
-        timeoutMs: 20000  // 20s timeout, như test trước (có thể thay bằng input nếu có)
-      })
-    })
-    .then(response => {
-      console.log('Proxy response status:', response.status);
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(result => {
-      console.log('Proxy result:', result);  // Log debug
-      if (resultDiv) {
-        const totalLatency = result.tcp ? result.tcp.latency + (result.http ? result.http.latency : 0) : 'N/A';
-        resultDiv.innerHTML = `
-          <h3>Kết Quả Kiểm Tra Proxy</h3>
-          <p><strong>Proxy:</strong> ${result.proxy || proxyValue}</p>
-          <p><strong>Loại:</strong> ${result.type}</p>
-          <p><strong>Alive Tổng:</strong> ${result.alive ? 'Sống' : 'Chết'}</p>
-          <p><strong>TCP Check:</strong> ${result.tcp.alive ? `Sống (${result.tcp.latency}ms - ${result.tcp.message})` : `Chết - ${result.tcp.message}`}</p>
-          <p><strong>HTTP/SOCKS Check:</strong> ${result.http.alive ? `Sống (${result.http.latency}ms, Status: ${result.http.statusCode})` : `Chết - ${result.http.error || 'Unknown'}`}</p>
-          <p><strong>Thời Gian Tổng:</strong> ${totalLatency}ms</p>
-          <p><strong>Số Lần Thử:</strong> ${result.http ? result.http.tries : 'N/A'}</p>
-        `;
-      } else {
-        alert(`Kết quả: ${result.alive ? 'Sống' : 'Chết'} | Latency: ${totalLatency}ms | TCP: ${result.tcp.message}`);
-      }
-    })
-    .catch(error => {
-      console.error('Lỗi kiểm tra proxy:', error);
-      if (resultDiv) {
-        resultDiv.innerHTML = `<p style="color: red;">Lỗi: ${error.message} (Kiểm tra backend chạy port 4000?)</p>`;
-      } else {
-        alert('Lỗi kiểm tra: ' + error.message);
-      }
-    });
   }
-});
+
+  if (!info) {
+    document.getElementById("ip").textContent = "Không thể tải IP";
+    document.getElementById("country").textContent = "Không thể tải quốc gia";
+    document.getElementById("isp").textContent = "Không thể tải ISP";
+    document.getElementById("map-container").innerHTML =
+      "<p style='padding:12px'>Không thể tải bản đồ.</p>";
+    return;
+  }
+
+  // Hiển thị dữ liệu
+  document.getElementById("ip").textContent = info.ip || "Không rõ";
+  document.getElementById("country").textContent = info.country || "Không rõ";
+  document.getElementById("isp").textContent = info.isp || "Không rõ";
+
+  // Bản đồ
+  const lat = info.lat;
+  const lon = info.lon;
+  const mapContainer = document.getElementById("map-container");
+
+  if (lat && lon && mapContainer) {
+    const iframe = document.createElement("iframe");
+    iframe.style.border = "0";
+    iframe.style.width = "100%";
+    iframe.style.height = "100%";
+
+    const delta = 0.02;
+    const bbox = [
+      lon - delta,
+      lat - delta,
+      lon + delta,
+      lat + delta
+    ].join("%2C");
+
+    iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
+
+    mapContainer.innerHTML = "";
+    mapContainer.appendChild(iframe);
+
+    const link = document.createElement("a");
+    link.href = `https://www.google.com/maps?q=${lat},${lon}`;
+    link.target = "_blank";
+    link.rel = "noopener";
+    link.textContent = `Mở Google Maps (${lat}, ${lon})`;
+    mapContainer.appendChild(document.createElement("br"));
+    mapContainer.appendChild(link);
+  }
+}
+
+// Luôn gọi API mới mỗi lần load trang
+document.addEventListener("DOMContentLoaded", fetchIpInfo);
