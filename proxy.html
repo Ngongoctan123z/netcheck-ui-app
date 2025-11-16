@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title id="head-title">NetCheck</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .proxy-page .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    .proxy-page label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .proxy-page textarea {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+      font-family: monospace;
+      font-size: 13px;
+      border-radius: 6px;
+      border: 1px solid #ced4da;
+      padding: 10px;
+    }
+    .proxy-page select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ced4da;
+      font-size: 13px;
+    }
+    .proxy-page .hint {
+      font-size: 12px;
+      color: #777;
+      margin-top: 6px;
+    }
+    .proxy-page .controls {
+      margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .proxy-page .btn {
+      background: #0d6efd;
+      color: #fff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(13,110,253,0.3);
+      transition: background 0.2s;
+    }
+    .proxy-page .btn:hover:not(:disabled) {
+      background: #0b5ed7;
+    }
+    .proxy-page .btn:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    .proxy-page .status {
+      margin-top: 10px;
+      color: #0d6efd;
+      font-weight: 500;
+    }
+    .proxy-page .table-wrap {
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    .proxy-page table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .proxy-page th,
+    .proxy-page td {
+      border: 1px solid #e9ecef;
+      padding: 8px 6px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .proxy-page th {
+      background: #f8f9fa;
+      font-weight: 600;
+    }
+    .proxy-page .tag-ok {
+      color: #0f5132;
+      background: #d1e7dd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .proxy-page .tag-dead {
+      color: #842029;
+      background: #f8d7da;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    .proxy-page .tag-unk {
+      color: #664d03;
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+    @media (max-width: 600px) {
+      .proxy-page .controls {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    .lang-display {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lang-flag {
+      width: 20px;
+      height: 14px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 2px;
+    }
+    #lang-switcher {
+      margin-left: 8px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-logo">
+      <img src="logo.png" alt="ProxyTools">
+      <span class="logo-text">NetCheck</span>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" id="nav-ip">Kiểm tra IP</a>
+      <a href="proxy.html" class="active" id="nav-proxy">Kiểm tra Proxy</a>
+    </div>
+    <div class="nav-lang">
+      <div class="lang-display" id="lang-display">
+        <span class="lang-flag" id="lang-flag"></span>
+        <span class="lang-name" id="lang-name">Vietnam</span>
+      </div>
+      <select id="lang-switcher"></select>
+    </div>
+  </nav>
+
+  <main class="container proxy-page">
+    <h1 id="page-title">Kiểm tra Proxy có xác thực</h1>
+    <p id="step-text-1">
+      Bước 1: Chọn loại proxy và dán danh sách định dạng user:pass@ip:port.
+    </p>
+    <p id="step-text-2">
+      Bước 2: Bấm <strong>Kiểm tra proxy</strong> để kiểm tra TCP + HTTP/SOCKS thật.
+    </p>
+
+    <label for="proxy-type" id="label-proxy-type">Loại proxy</label>
+    <select id="proxy-type">
+      <option value="http" id="opt-http">HTTP / HTTPS</option>
+      <option value="socks4" id="opt-socks4">SOCKS4</option>
+      <option value="socks5" id="opt-socks5">SOCKS5</option>
+    </select>
+
+    <label for="proxy-input" id="label-proxy-input" style="margin-top:12px">
+      Nhập danh sách proxy
+    </label>
+   <textarea
+  id="proxy-input"
+  placeholder="user:pass@123.45.67.89:8080
+example 
+p3tAe:4vThAeBb@104.161.50.169:12862
+user : p3tAe
+pass : 4vThAeBb
+ip   : 104.161.50.169
+port : 12862
+separated by ':' and '@'"
+></textarea>
+
+
+    <div class="hint" id="hint-text">
+      • Định dạng bắt buộc: user:pass@ip:port.<br>
+      • Chọn đúng loại: HTTP/HTTPS hoặc SOCKS4/SOCKS5.<br>
+      • Công cụ kiểm tra TCP trước, sau đó gửi request thật qua proxy (có retry).
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="check-btn">Kiểm tra proxy</button>
+      <div class="status" id="status-text">
+        Chưa kiểm tra. Dán danh sách user:pass@ip:port rồi bấm nút.
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <table id="result-table">
+        <thead>
+          <tr>
+            <th id="th-index">#</th>
+            <th id="th-proxy">Proxy</th>
+            <th id="th-type">Loại</th>
+            <th id="th-status">Trạng thái</th>
+            <th id="th-latency">Độ trễ (ms)</th>
+            <th id="th-note">Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody id="result-body"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="footer-large">
+    <div class="footer-large-inner">
+      <div class="footer-col footer-brand">
+        <div class="footer-logo" id="footer-logo">NetCheck</div>
+        <p class="footer-desc" id="footer-desc">
+          Công cụ giúp kiểm tra proxy có xác thực (HTTP/SOCKS) bằng kết nối thật.
+          Đây chỉ là công cụ tham khảo.
+        </p>
+      </div>
+      <div class="footer-col" id="footer-terms-col">
+        <div class="footer-col-title" id="footer-terms-title">
+          Điều khoản &amp; chính sách
+        </div>
+        <span class="footer-link" id="footer-terms-use">
+          Chỉ dùng cho mục đích hợp pháp.
+        </span>
+        <span class="footer-link" id="footer-privacy">
+          Không thu thập thêm dữ liệu cá nhân ngoài thông tin kỹ thuật.
+        </span>
+        <span class="footer-link" id="footer-cookie">
+          Cookie (nếu có) chỉ để cải thiện trải nghiệm.
+        </span>
+        <span class="footer-link" id="footer-liability">
+          Kết quả mang tính tham khảo; bạn tự chịu trách nhiệm khi sử dụng.
+        </span>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title" id="footer-data-title">Dữ liệu &amp; bảo mật</div>
+        <span class="footer-link" id="footer-data-1">
+          Chỉ thu thập thông tin kỹ thuật cơ bản (IP, User-Agent)
+        </span>
+        <span class="footer-link" id="footer-data-2">
+          Không bán/chia sẻ dữ liệu cá nhân cho bên thứ ba
+        </span>
+        <span class="footer-link" id="footer-data-3">
+          Bạn chịu trách nhiệm với danh sách proxy nhập vào
+        </span>
+        <span class="footer-link" id="footer-data-4">
+          Tuân thủ pháp luật Internet hiện hành
+        </span>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title" id="footer-contact-title">
+          Liên hệ &amp; hỗ trợ
+        </div>
+        <span class="footer-link" id="footer-support-email">
+          Email hỗ trợ: support@example.com
+        </span>
+        <span class="footer-link" id="footer-support-bug">Báo lỗi &amp; góp ý</span>
+        <span class="footer-link" id="footer-support-guide">Hướng dẫn sử dụng</span>
+      </div>
+    </div>
+    <div class="footer-large-bottom">
+      <span id="footer-bottom">
+        Tiếp tục sử dụng đồng nghĩa bạn đồng ý với Điều khoản và Chính sách bảo mật.
+      </span>
+    </div>
+  </footer>
+
+  <script>
+    const i18n = {
+      vi: {
+        headTitle: "Kiểm tra Proxy (có user/pass)",
+        navIp: "Kiểm tra IP",
+        navProxy: "Kiểm tra Proxy",
+        pageTitle: "Kiểm tra Proxy có xác thực",
+        step1: "Bước 1: Chọn loại proxy và dán danh sách định dạng user:pass@ip:port.",
+        step2: 'Bước 2: Bấm "Kiểm tra proxy" để kiểm tra TCP + HTTP/SOCKS thật.',
+        labelProxyType: "Loại proxy",
+        optHttp: "HTTP / HTTPS",
+        optSocks4: "SOCKS4",
+        optSocks5: "SOCKS5",
+        labelProxyInput: "Nhập danh sách proxy (bắt buộc user:pass@ip:port)",
+        hint:
+          "• Định dạng bắt buộc: user:pass@ip:port.\n• Chọn đúng loại: HTTP/HTTPS hoặc SOCKS4/SOCKS5.\n• Công cụ kiểm tra TCP trước, sau đó gửi request thật qua proxy (có retry).",
+        btnCheck: "Kiểm tra proxy",
+        statusInit: "Chưa kiểm tra. Dán danh sách user:pass@ip:port rồi bấm nút.",
+        thIndex: "#",
+        thProxy: "Proxy",
+        thType: "Loại",
+        thStatus: "Trạng thái",
+        thLatency: "Độ trễ (ms)",
+        thNote: "Ghi chú",
+        tagChecking: "Đang kiểm tra...",
+        tagAlive: "Sống",
+        tagDead: "Chết",
+        tagError: "Lỗi",
+        footerLogo: "NetCheck",
+        footerDesc:
+          "Công cụ giúp kiểm tra proxy có xác thực (HTTP/SOCKS) bằng kết nối thật. Đây chỉ là công cụ tham khảo.",
+        footerTermsTitle: "Điều khoản & chính sách",
+        footerTermsUse: "Chỉ dùng cho mục đích hợp pháp.",
+        footerPrivacy:
+          "Không thu thập thêm dữ liệu cá nhân ngoài thông tin kỹ thuật.",
+        footerCookie: "Cookie (nếu có) chỉ để cải thiện trải nghiệm.",
+        footerLiability:
+          "Kết quả mang tính tham khảo; bạn tự chịu trách nhiệm khi sử dụng.",
+        footerDataTitle: "Dữ liệu & bảo mật",
+        footerData1: "Chỉ thu thập thông tin kỹ thuật cơ bản (IP, User-Agent)",
+        footerData2: "Không bán/chia sẻ dữ liệu cá nhân cho bên thứ ba",
+        footerData3: "Bạn chịu trách nhiệm với danh sách proxy nhập vào",
+        footerData4: "Tuân thủ pháp luật Internet hiện hành",
+        footerContactTitle: "Liên hệ & hỗ trợ",
+        footerSupportEmail: "Email hỗ trợ: support@example.com",
+        footerSupportBug: "Báo lỗi & góp ý",
+        footerSupportGuide: "Hướng dẫn sử dụng",
+        footerBottom:
+          "Tiếp tục sử dụng đồng nghĩa bạn đồng ý với Điều khoản và Chính sách bảo mật."
+      },
+      en: {
+        headTitle: "Proxy Checker (auth required)",
+        navIp: "IP Checker",
+        navProxy: "Proxy Checker",
+        pageTitle: "Check authenticated proxies",
+        step1:
+          "Step 1: Choose proxy type and paste list in user:pass@ip:port format.",
+        step2:
+          'Step 2: Click "Check proxies" to run real TCP + HTTP/SOCKS tests.',
+        labelProxyType: "Proxy type",
+        optHttp: "HTTP / HTTPS",
+        optSocks4: "SOCKS4",
+        optSocks5: "SOCKS5",
+        labelProxyInput: "Enter proxy list (must be user:pass@ip:port)",
+        hint:
+          "• Required format: user:pass@ip:port.\n• Pick correct type: HTTP/HTTPS or SOCKS4/SOCKS5.\n• Tool checks TCP first, then sends real requests via proxy (with retry).",
+        btnCheck: "Check proxies",
+        statusInit:
+          "Not checked yet. Paste user:pass@ip:port list, then click the button.",
+        thIndex: "#",
+        thProxy: "Proxy",
+        thType: "Type",
+        thStatus: "Status",
+        thLatency: "Latency (ms)",
+        thNote: "Note",
+        tagChecking: "Checking...",
+        tagAlive: "Alive",
+        tagDead: "Dead",
+        tagError: "Error",
+        footerLogo: "NetCheck",
+        footerDesc:
+          "Tool to check authenticated proxies (HTTP/SOCKS) using real requests. For reference only.",
+        footerTermsTitle: "Terms & Policies",
+        footerTermsUse: "For legal purposes only.",
+        footerPrivacy: "No personal data collected beyond technical info.",
+        footerCookie: "Cookies (if any) only to improve UX.",
+        footerLiability:
+          "Results are indicative; use at your own risk.",
+        footerDataTitle: "Data & Security",
+        footerData1: "Only collect basic technical info (IP, User-Agent)",
+        footerData2: "No selling/sharing personal data",
+        footerData3: "You are responsible for provided proxy list",
+        footerData4: "Comply with applicable Internet laws",
+        footerContactTitle: "Contact & Support",
+        footerSupportEmail: "Support email: support@example.com",
+        footerSupportBug: "Report bugs & suggest features",
+        footerSupportGuide: "Usage guide",
+        footerBottom:
+          "By continuing, you agree to our Terms and Privacy Policy."
+      },
+      ko: {
+        headTitle: "프록시 확인 (인증 필수)",
+        navIp: "IP 확인",
+        navProxy: "프록시 확인",
+        pageTitle: "인증형 프록시 점검",
+        step1:
+          "1단계: user:pass@ip:port 형식의 목록을 붙여넣습니다.",
+        step2:
+          '2단계: "프록시 확인"을 눌러 TCP + HTTP/SOCKS 실제 테스트를 수행합니다.',
+        labelProxyType: "프록시 유형",
+        optHttp: "HTTP / HTTPS",
+        optSocks4: "SOCKS4",
+        optSocks5: "SOCKS5",
+        labelProxyInput: "프록시 목록 입력 (user:pass@ip:port 필수)",
+        hint:
+          "• 필수 형식: user:pass@ip:port\n• HTTP/HTTPS 또는 SOCKS4/SOCKS5 유형을 정확히 선택\n• TCP 확인 후 실제 요청을 전송(재시도 포함)",
+        btnCheck: "프록시 확인",
+        statusInit:
+          "아직 확인하지 않았습니다. user:pass@ip:port 목록을 붙여넣고 버튼을 누르세요.",
+        thIndex: "#",
+        thProxy: "프록시",
+        thType: "유형",
+        thStatus: "상태",
+        thLatency: "지연 (ms)",
+        thNote: "비고",
+        tagChecking: "확인 중...",
+        tagAlive: "생존",
+        tagDead: "사망",
+        tagError: "오류",
+        footerLogo: "NetCheck",
+        footerDesc:
+          "실제 요청으로 인증형 프록시를 점검하는 도구입니다. 참고용입니다.",
+        footerTermsTitle: "약관 및 정책",
+        footerTermsUse: "합법적인 목적으로만 사용",
+        footerPrivacy: "기술 정보 외 개인정보 수집 안 함",
+        footerCookie: "쿠키(있을 시) UX 개선용",
+        footerLiability:
+          "결과는 참고용; 사용 책임은 사용자에게 있음",
+        footerDataTitle: "데이터 & 보안",
+        footerData1: "기본 기술 정보(IP, User-Agent)만 수집",
+        footerData2: "개인정보 판매/공유 안 함",
+        footerData3:
+          "제공된 프록시 목록에 대한 책임은 사용자에게 있음",
+        footerData4: "인터넷 관련 법률 준수",
+        footerContactTitle: "연락처 & 지원",
+        footerSupportEmail: "지원 이메일: support@example.com",
+        footerSupportBug: "버그 신고 & 기능 제안",
+        footerSupportGuide: "사용 가이드",
+        footerBottom:
+          "계속 사용 시 약관 및 개인정보처리방침에 동의하는 것으로 간주됩니다."
+      },
+      ja: {
+        headTitle: "プロキシチェッカー（認証必須）",
+        navIp: "IPチェッカー",
+        navProxy: "プロキシチェッカー",
+        pageTitle: "認証型プロキシの確認",
+        step1:
+          "ステップ1: user:pass@ip:port 形式のリストを貼り付けます.",
+        step2:
+          "ステップ2: 「プロキシをチェック」をクリックして TCP + HTTP/SOCKS の実テストを実行します.",
+        labelProxyType: "プロキシの種類",
+        optHttp: "HTTP / HTTPS",
+        optSocks4: "SOCKS4",
+        optSocks5: "SOCKS5",
+        labelProxyInput: "プロキシリストを入力（user:pass@ip:port 必須）",
+        hint:
+          "• 必須形式: user:pass@ip:port\n• 正しい種類を選択: HTTP/HTTPS または SOCKS4/SOCKS5\n• TCP確認後、プロキシ経由で実リクエストを送信（リトライ含む）",
+        btnCheck: "プロキシをチェック",
+        statusInit:
+          "未チェック。user:pass@ip:port リストを貼り付けてボタンを押してください.",
+        thIndex: "#",
+        thProxy: "プロキシ",
+        thType: "種類",
+        thStatus: "状態",
+        thLatency: "レイテンシ (ms)",
+        thNote: "備考",
+        tagChecking: "チェック中...",
+        tagAlive: "生存",
+        tagDead: "死亡",
+        tagError: "エラー",
+        footerLogo: "NetCheck",
+        footerDesc:
+          "実リクエストで認証型プロキシを確認するツールです。参考用です.",
+        footerTermsTitle: "規約 & ポリシー",
+        footerTermsUse: "合法的な目的のみ",
+        footerPrivacy:
+          "技術情報以外の個人情報は収集しません",
+        footerCookie:
+          "クッキー(もしあれば) UX改善のみ",
+        footerLiability:
+          "結果は参考用; 使用は自己責任",
+        footerDataTitle: "データ & セキュリティ",
+        footerData1: "基本技術情報（IP、User-Agent）のみ収集",
+        footerData2: "個人データの販売/共有なし",
+        footerData3:
+          "提供されたプロキシリストの責任はユーザーにあり",
+        footerData4: "インターネット関連法規遵守",
+        footerContactTitle: "連絡先 & サポート",
+        footerSupportEmail: "サポートメール: support@example.com",
+        footerSupportBug: "バグ報告 & 機能提案",
+        footerSupportGuide: "利用ガイド",
+        footerBottom:
+          "継続利用により、規約およびプライバシーポリシーに同意したものとみなされます."
+      },
+      th: {
+        headTitle:
+          "เครื่องมือตรวจสอบพร็อกซี (ต้องใส่ user/pass)",
+        navIp: "ตรวจสอบ IP",
+        navProxy: "ตรวจสอบพร็อกซี",
+        pageTitle: "ตรวจสอบพร็อกซีที่ต้องการยืนยันตัวตน",
+        step1:
+          "ขั้นตอนที่ 1: เลือกประเภทพร็อกซีและวางรายการรูปแบบ user:pass@ip:port",
+        step2:
+          'ขั้นตอนที่ 2: คลิก "ตรวจสอบพร็อกซี" เพื่อทำการทดสอบ TCP + HTTP/SOCKS จริง',
+        labelProxyType: "ประเภทพร็อกซี",
+        optHttp: "HTTP / HTTPS",
+        optSocks4: "SOCKS4",
+        optSocks5: "SOCKS5",
+        labelProxyInput:
+          "ใส่รายการพร็อกซี (ต้อง user:pass@ip:port)",
+        hint:
+          "• รูปแบบที่จำเป็น: user:pass@ip:port\n• เลือกประเภทให้ถูกต้อง: HTTP/HTTPS หรือ SOCKS4/SOCKS5\n• เครื่องมือจะตรวจ TCP ก่อน แล้วส่งคำขอจริงผ่านพร็อกซี (มีการลองใหม่)",
+        btnCheck: "ตรวจสอบพร็อกซี",
+        statusInit:
+          "ยังไม่ได้ตรวจสอบ วางรายการ user:pass@ip:port แล้วกดปุ่ม",
+        thIndex: "#",
+        thProxy: "พร็อกซี",
+        thType: "ประเภท",
+        thStatus: "สถานะ",
+        thLatency: "ความหน่วง (ms)",
+        thNote: "หมายเหตุ",
+        tagChecking: "กำลังตรวจสอบ...",
+        tagAlive: "ใช้งานได้",
+        tagDead: "ตาย",
+        tagError: "ข้อผิดพลาด",
+        footerLogo: "NetCheck",
+        footerDesc:
+          "เครื่องมือตรวจสอบพร็อกซีที่ต้องยืนยันตัวตน (HTTP/SOCKS) โดยใช้คำขอจริง เพื่ออ้างอิงเท่านั้น",
+        footerTermsTitle: "ข้อกำหนด & นโยบาย",
+        footerTermsUse:
+          "ใช้เพื่อวัตถุประสงค์ที่ถูกกฎหมายเท่านั้น",
+        footerPrivacy:
+          "ไม่เก็บข้อมูลส่วนบุคคลนอกจากข้อมูลทางเทคนิค",
+        footerCookie:
+          "คุกกี้ (ถ้ามี) เพื่อปรับปรุง UX เท่านั้น",
+        footerLiability:
+          "ผลลัพธ์เป็นเพียงข้อมูลอ้างอิง ใช้โดยความเสี่ยงของท่านเอง",
+        footerDataTitle: "ข้อมูล & ความปลอดภัย",
+        footerData1:
+          "เก็บข้อมูลทางเทคนิคพื้นฐานเท่านั้น (IP, User-Agent)",
+        footerData2: "ไม่ขาย/แบ่งปันข้อมูลส่วนบุคคล",
+        footerData3:
+          "ท่านรับผิดชอบรายการพร็อกซีที่ให้มา",
+        footerData4:
+          "ปฏิบัติตามกฎหมายอินเทอร์เน็ตที่เกี่ยวข้อง",
+        footerContactTitle: "ติดต่อ & สนับสนุน",
+        footerSupportEmail:
+          "อีเมลสนับสนุน: support@example.com",
+        footerSupportBug:
+          "รายงานข้อบกพร่อง & เสนอฟีเจอร์",
+        footerSupportGuide: "คู่มือการใช้งาน",
+        footerBottom:
+          "การใช้งานต่อถือว่าท่านยอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว"
+      },
+      lo: {
+        headTitle:
+          "ເຄື່ອງມືກວດ Proxy (ຕ້ອງໃສ່ user/pass)",
+        navIp: "ກວດ IP",
+        navProxy: "ກວດ Proxy",
+        pageTitle:
+          "ກວດ Proxy ທີ່ຕ້ອງການການຢືນຢັນຕົວຕົນ",
+        step1:
+          "ຂັ້ນຕອນ 1: ເລືອກປະເພດ proxy ແລະວາງລາຍການຮູບແບບ user:pass@ip:port",
+        step2:
+          'ຂັ້ນຕອນ 2: ກົດ "ກວດ Proxy" ເພື່ອເຮັດການທົດສອບ TCP + HTTP/SOCKS ຈິງ',
+        labelProxyType: "ປະເພດ proxy",
+        optHttp: "HTTP / HTTPS",
+        optSocks4: "SOCKS4",
+        optSocks5: "SOCKS5",
+        labelProxyInput:
+          "ໃສ່ລາຍການ proxy (ຕ້ອງ user:pass@ip:port)",
+        hint:
+          "• ຮູບແບບທີ່ຕ້ອງການ: user:pass@ip:port\n• ເລືອກປະເພດໃຫ້ຖືກຕ້ອງ: HTTP/HTTPS ຫຼື SOCKS4/SOCKS5\n• ເຄື່ອງມືກວດ TCP ກ່ອນ, ແລ້ວສົ່ງຄຳຂໍຈິງຜ່ານ proxy (ມີການລອງໃໝ່)",
+        btnCheck: "ກວດ Proxy",
+        statusInit:
+          "ຍັງບໍ່ໄດ້ກວດ. ວາງລາຍການ user:pass@ip:port ແລ້ວກົດປຸ່ມ",
+        thIndex: "#",
+        thProxy: "Proxy",
+        thType: "ປະເພດ",
+        thStatus: "ສະຖານະ",
+        thLatency: "ຄວາມຊ້າ (ms)",
+        thNote: "ໝາຍເຫດ",
+        tagChecking: "ກຳລັງກວດ...",
+        tagAlive: "ໃຊ້ໄດ້",
+        tagDead: "ຕາຍ",
+        tagError: "ຜິດພາດ",
+        footerLogo: "NetCheck",
+        footerDesc:
+          "ເຄື່ອງມືກວດ proxy ທີ່ຕ້ອງການການຢືນຢັນ (HTTP/SOCKS) ໂດຍໃຊ້ຄຳຂໍຈິງ ເພື່ອອ້າງອິງເທົ່ານັ້ນ",
+        footerTermsTitle: "ເງື່ອນໄຂ & ນະໂຍບາຍ",
+        footerTermsUse:
+          "ໃຊ້ສຳລັບຈຸດປະສົງທີ່ຖືກກົດໝາຍເທົ່ານັ້ນ",
+        footerPrivacy:
+          "ບໍ່ເກັບຂໍ້ມູນສ່ວນຕົວນອກຈາກຂໍ້ມູນທາງດ້ານເທັກນິກ",
+        footerCookie:
+          "ຄຸກກີ (ຖ້າມີ) ເພື່ອປັບປຸງ UX ເທົ່ານັ້ນ",
+        footerLiability:
+          "ຜົນລັບແມ່ນຂໍ້ມູນອ້າງອິງ ໃຊ້ໂດຍຄວາມສ່ຽງຂອງທ່ານເອງ",
+        footerDataTitle: "ຂໍ້ມູນ & ຄວາມປອດໄພ",
+        footerData1:
+          "ເກັບຂໍ້ມູນທາງດ້ານເທັກນິກພື້ນຖານເທົ່ານັ້ນ (IP, User-Agent)",
+        footerData2: "ບໍ່ຂາຍ/ແບ່ງປັນຂໍ້ມູນສ່ວນຕົວ",
+        footerData3:
+          "ທ່ານຮັບຜິດຊອບລາຍການ proxy ທີ່ໃຫ້ມາ",
+        footerData4:
+          "ປະຕິບັດຕາມກົດໝາຍອິນເຕີເນັດທີ່ກ່ຽວຂ້ອງ",
+        footerContactTitle: "ຕິດຕໍ່ & ສະໜັບສະໜູນ",
+        footerSupportEmail:
+          "ອີເມວສະໜັບສະໜູນ: support@example.com",
+        footerSupportBug:
+          "ລາຍງານບັນຫາ & ແນະນຳຄຸນສົມບັດ",
+        footerSupportGuide: "ຄູ່ມືການໃຊ້ງານ",
+        footerBottom:
+          "ການໃຊ້ຕໍ່ໄປຖືວ່າທ່ານຍອມຮັບເງື່ອນໄຂ ແລະ ນະໂຍບາຍຄວາມເປັນສ່ວນຕົວ"
+      }
+    };
+
+    function getLangMeta(lang) {
+      const map = {
+        vi: { name: "Vietnam", flag: "https://flagcdn.com/w40/vn.png" },
+        en: { name: "United States", flag: "https://flagcdn.com/w40/us.png" },
+        ko: { name: "Korea", flag: "https://flagcdn.com/w40/kr.png" },
+        ja: { name: "Japan", flag: "https://flagcdn.com/w40/jp.png" },
+        th: { name: "Thailand", flag: "https://flagcdn.com/w40/th.png" },
+        lo: { name: "Laos", flag: "https://flagcdn.com/w40/la.png" }
+      };
+      return map[lang] || { name: lang.toUpperCase(), flag: "" };
+    }
+
+    function getBrowserLang() {
+      const langs =
+        (navigator.languages && navigator.languages.length
+          ? navigator.languages
+          : [navigator.language || "vi"]);
+      for (const l of langs) {
+        const code = l.split("-")[0].toLowerCase();
+        if (i18n[code]) return code;
+      }
+      return "vi";
+    }
+
+    function createLangSwitcher(currentLang) {
+      const select = document.getElementById("lang-switcher");
+      if (!select) return;
+      select.innerHTML = "";
+      Object.keys(i18n).forEach((lang) => {
+        const meta = getLangMeta(lang);
+        const opt = document.createElement("option");
+        opt.value = lang;
+        opt.textContent = meta.name;
+        if (lang === currentLang) opt.selected = true;
+        select.appendChild(opt);
+      });
+      select.onchange = () => loadLang(select.value);
+    }
+
+    function loadLang(lang) {
+      const t = i18n[lang] || i18n.vi;
+      const setText = (id, value) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = value;
+      };
+
+      setText("head-title", t.headTitle);
+      setText("nav-ip", t.navIp);
+      setText("nav-proxy", t.navProxy);
+
+      setText("page-title", t.pageTitle);
+      setText("step-text-1", t.step1);
+      const step2El = document.getElementById("step-text-2");
+      if (step2El) step2El.innerHTML = t.step2;
+
+      setText("label-proxy-type", t.labelProxyType);
+      setText("opt-http", t.optHttp);
+      setText("opt-socks4", t.optSocks4);
+      setText("opt-socks5", t.optSocks5);
+
+      setText("label-proxy-input", t.labelProxyInput);
+      const hintEl = document.getElementById("hint-text");
+      if (hintEl) hintEl.innerHTML = t.hint.replace(/\n/g, "<br>");
+
+      setText("check-btn", t.btnCheck);
+      setText("status-text", t.statusInit);
+
+      setText("th-index", t.thIndex);
+      setText("th-proxy", t.thProxy);
+      setText("th-type", t.thType);
+      setText("th-status", t.thStatus);
+      setText("th-latency", t.thLatency);
+      setText("th-note", t.thNote);
+
+      setText("footer-logo", t.footerLogo);
+      setText("footer-desc", t.footerDesc);
+      setText("footer-terms-title", t.footerTermsTitle);
+      setText("footer-terms-use", t.footerTermsUse);
+      setText("footer-privacy", t.footerPrivacy);
+      setText("footer-cookie", t.footerCookie);
+      setText("footer-liability", t.footerLiability);
+      setText("footer-data-title", t.footerDataTitle);
+      setText("footer-data-1", t.footerData1);
+      setText("footer-data-2", t.footerData2);
+      setText("footer-data-3", t.footerData3);
+      setText("footer-data-4", t.footerData4);
+      setText("footer-contact-title", t.footerContactTitle);
+      setText("footer-support-email", t.footerSupportEmail);
+      setText("footer-support-bug", t.footerSupportBug);
+      setText("footer-support-guide", t.footerSupportGuide);
+      setText("footer-bottom", t.footerBottom);
+
+      const meta = getLangMeta(lang);
+      const flagEl = document.getElementById("lang-flag");
+      const nameEl = document.getElementById("lang-name");
+      if (flagEl) {
+        flagEl.style.backgroundImage = meta.flag
+          ? `url('${meta.flag}')`
+          : "none";
+      }
+      if (nameEl) nameEl.textContent = meta.name;
+
+      createLangSwitcher(lang);
+      localStorage.setItem("lang_proxy", lang);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const saved =
+        localStorage.getItem("lang_proxy") || localStorage.getItem("lang");
+      const lang = saved || getBrowserLang();
+      loadLang(lang);
+    });
+  </script>
+
+  <script>
+    async function checkProxyReal(proxyString, type) {
+      const resp = await fetch("http://localhost:4000/api/check-proxy-strong", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          proxy: proxyString,
+          type: type,
+          timeoutMs: 20000
+        })
+      });
+      if (!resp.ok) {
+        throw new Error("HTTP " + resp.status);
+      }
+      return resp.json();
+    }
+
+    function isAuthFormat(line) {
+      if (!line.includes("@")) return false;
+      const [auth, host] = line.split("@");
+      if (!auth || !host) return false;
+      if (!auth.includes(":")) return false;
+      if (!host.includes(":")) return false;
+      const portPart = host.split(":")[1];
+      const port = parseInt(portPart, 10);
+      return !Number.isNaN(port) && port >= 1 && port <= 65535;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const inputEl = document.getElementById("proxy-input");
+      const typeEl = document.getElementById("proxy-type");
+      const btn = document.getElementById("check-btn");
+      const statusEl = document.getElementById("status-text");
+      const bodyEl = document.getElementById("result-body");
+
+      btn.addEventListener("click", async () => {
+        const lang =
+          localStorage.getItem("lang_proxy") ||
+          localStorage.getItem("lang") ||
+          "vi";
+        const t = i18n[lang] || i18n.vi;
+
+        const lines = inputEl.value
+          .split("\n")
+          .map((l) => l.trim())
+          .filter((l) => l.length > 0 && isAuthFormat(l));
+
+        const type = typeEl.value;
+        bodyEl.innerHTML = "";
+
+        if (lines.length === 0) {
+          statusEl.textContent = t.statusInit;
+          return;
+        }
+
+        btn.disabled = true;
+        statusEl.textContent = t.tagChecking;
+
+        let index = 0;
+        for (const line of lines) {
+          index++;
+
+          const row = document.createElement("tr");
+          const cellIndex = document.createElement("td");
+          const cellProxy = document.createElement("td");
+          const cellType = document.createElement("td");
+          const cellStatus = document.createElement("td");
+          const cellLatency = document.createElement("td");
+          const cellNote = document.createElement("td");
+
+          cellIndex.textContent = index;
+          cellProxy.textContent = line;
+          cellType.textContent = type.toUpperCase();
+          cellStatus.innerHTML = `<span class="tag-unk">${t.tagChecking}</span>`;
+          cellLatency.textContent = "-";
+          cellNote.textContent = "";
+
+          row.appendChild(cellIndex);
+          row.appendChild(cellProxy);
+          row.appendChild(cellType);
+          row.appendChild(cellStatus);
+          row.appendChild(cellLatency);
+          row.appendChild(cellNote);
+          bodyEl.appendChild(row);
+
+          try {
+            const result = await checkProxyReal(line, type);
+            const tcp = result.tcp || {};
+            const http = result.http || {};
+
+            const latency =
+              http.latency != null ? http.latency : tcp.latency;
+
+            if (result.alive) {
+              cellStatus.innerHTML = `<span class="tag-ok">${t.tagAlive}</span>`;
+              cellLatency.textContent =
+                latency != null ? String(latency) : "-";
+
+              if (http.alive) {
+                cellNote.textContent =
+                  `TCP: ${tcp.message || "OK"}; HTTP: OK` +
+                  (http.statusCode
+                    ? ` (status ${http.statusCode})`
+                    : "") +
+                  (http.tries ? `, tries: ${http.tries}` : "");
+              } else {
+                cellNote.textContent = tcp.message || "TCP OK";
+              }
+            } else {
+              cellStatus.innerHTML = `<span class="tag-dead">${t.tagDead}</span>`;
+              cellLatency.textContent =
+                latency != null ? String(latency) : "-";
+              const msg =
+                (http && http.error) ||
+                (tcp && tcp.message) ||
+                "No response";
+              cellNote.textContent = msg;
+            }
+          } catch (e) {
+            cellStatus.innerHTML = `<span class="tag-dead">${t.tagError}</span>`;
+            cellLatency.textContent = "-";
+            cellNote.textContent = "Backend error: " + e.message;
+          }
+        }
+
+        statusEl.textContent = t.statusInit;
+        btn.disabled = false;
+      });
+    });
+  </script>
+</body>
+</html>
