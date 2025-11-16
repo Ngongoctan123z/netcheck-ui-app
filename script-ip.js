@@ -5,7 +5,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const mapContainer = document.getElementById('map-container');
 
   // SỬA: Dùng local để dev, tránh lỗi mixed content/URL sai
-  const API_BASE = 'http://localhost:4000';  // Đổi thành 'https://netcheck-backend-1.onrender.com' khi deploy
+  const API_BASE = 'http://localhost:4000';  // Đổi thành 'https://netcheck-api-server.onrender.com' khi deploy Render online
 
   console.log('Calling API:', `${API_BASE}/ip-info`);  // Log để debug
 
@@ -46,4 +46,68 @@ window.addEventListener('DOMContentLoaded', () => {
       ispDisplay.textContent = 'Không thể lấy thông tin';
       mapContainer.textContent = 'Không thể tải bản đồ';
     });
+
+  // THÊM MỚI: Phần kiểm tra proxy (tích hợp vào cùng file, gọi /api/check-proxy-strong)
+  const proxyInput = document.getElementById('proxy-input');
+  const typeSelect = document.getElementById('type-select');
+  const testBtn = document.getElementById('test-btn');
+  const resultDiv = document.getElementById('result');  // Div hiển thị kết quả (thêm ID="result" ở HTML nếu chưa)
+
+  if (testBtn) {
+    testBtn.addEventListener('click', testProxy);  // Gán event cho nút Test
+  }
+
+  function testProxy() {
+    const proxyValue = proxyInput ? proxyInput.value.trim() : '';
+    const selectedType = typeSelect ? typeSelect.value : 'http';
+    if (!proxyValue) {
+      alert('Nhập proxy (format: user:pass@ip:port)');
+      return;
+    }
+
+    console.log('Testing proxy:', proxyValue, 'Type:', selectedType);  // Log debug
+
+    fetch(`${API_BASE}/api/check-proxy-strong`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        proxy: proxyValue,  // Single proxy string (backend tự parse user:pass@ip:port)
+        type: selectedType,  // HTTP/HTTPS/SOCKS4/SOCKS5 từ dropdown
+        timeoutMs: 20000  // 20s timeout, như test trước (có thể thay bằng input nếu có)
+      })
+    })
+    .then(response => {
+      console.log('Proxy response status:', response.status);
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(result => {
+      console.log('Proxy result:', result);  // Log debug
+      if (resultDiv) {
+        const totalLatency = result.tcp ? result.tcp.latency + (result.http ? result.http.latency : 0) : 'N/A';
+        resultDiv.innerHTML = `
+          <h3>Kết Quả Kiểm Tra Proxy</h3>
+          <p><strong>Proxy:</strong> ${result.proxy || proxyValue}</p>
+          <p><strong>Loại:</strong> ${result.type}</p>
+          <p><strong>Alive Tổng:</strong> ${result.alive ? 'Sống' : 'Chết'}</p>
+          <p><strong>TCP Check:</strong> ${result.tcp.alive ? `Sống (${result.tcp.latency}ms - ${result.tcp.message})` : `Chết - ${result.tcp.message}`}</p>
+          <p><strong>HTTP/SOCKS Check:</strong> ${result.http.alive ? `Sống (${result.http.latency}ms, Status: ${result.http.statusCode})` : `Chết - ${result.http.error || 'Unknown'}`}</p>
+          <p><strong>Thời Gian Tổng:</strong> ${totalLatency}ms</p>
+          <p><strong>Số Lần Thử:</strong> ${result.http ? result.http.tries : 'N/A'}</p>
+        `;
+      } else {
+        alert(`Kết quả: ${result.alive ? 'Sống' : 'Chết'} | Latency: ${totalLatency}ms | TCP: ${result.tcp.message}`);
+      }
+    })
+    .catch(error => {
+      console.error('Lỗi kiểm tra proxy:', error);
+      if (resultDiv) {
+        resultDiv.innerHTML = `<p style="color: red;">Lỗi: ${error.message} (Kiểm tra backend chạy port 4000?)</p>`;
+      } else {
+        alert('Lỗi kiểm tra: ' + error.message);
+      }
+    });
+  }
 });
