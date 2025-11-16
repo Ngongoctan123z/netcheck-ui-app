@@ -717,21 +717,28 @@ separated by ':' and '@'"
   </script>
 
   <script>
-    async function checkProxyReal(proxyString, type) {
-      const resp = await fetch("http://localhost:4000/api/check-proxy-strong", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          proxy: proxyString,
-          type: type,
-          timeoutMs: 20000
-        })
-      });
-      if (!resp.ok) {
-        throw new Error("HTTP " + resp.status);
-      }
-      return resp.json();
-    }
+   async function checkProxyReal(proxyString, type) {
+  // Tự động chọn URL backend theo môi trường
+  const API_BASE = window.location.hostname.includes("localhost")
+    ? "http://localhost:4000"
+    : "https://netcheck.onrender.com";
+
+  const resp = await fetch(`${API_BASE}/api/check-proxy-strong`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      proxy: proxyString,
+      type: type,
+      timeoutMs: 20000
+    })
+  });
+
+  if (!resp.ok) {
+    throw new Error("HTTP " + resp.status);
+  }
+
+  return resp.json();
+}
 
     function isAuthFormat(line) {
       if (!line.includes("@")) return false;
